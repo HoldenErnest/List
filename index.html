@@ -1,16 +1,28 @@
 <html> 
     <head>
         <link rel="stylesheet" href="style.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js" integrity="sha512-bcfltY+lNLlNxz38yBBm/HLaUB1gTV6I0e+fahbF9pS6roIdzUytozWdnFV8ZnM6cSAG5EbmO0ag0a/fLZSG4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     </head>
   
     <body>
         <script src="main.js"></script>
         <div id="content"></div>
-        <button onclick="newEntry()">+ New Entry</button>
-        <button onclick="myFunc()"></button>
-        <button onclick="myFunc()">Click</button>
-        <div id="create">this is the creation box, make new entries here</div>
-        <div id="allEntries">this is the complete list</div>
+        <button onclick="newEntry()">+ entry</button>
+        <select id ="sortSelect" name="sortSelect" onmousedown="this.value='';" onchange="sortBy(this.value);">
+            <option value='1'>Title</option>
+            <option value='2'>Rating</option>
+            <option value='3'>Seasons</option>
+          </select>
+        <button onclick="exportList()">export</button>
+
+        <div id="create">
+            this is the creation box, make new entries here
+            <button onclick="addListItem()">export</button>
+        </div>
+
+        <div id="allEntries">
+            <div class="listItem"> item a</div>
+            <div class="listItem"> item b</div>
+
+        </div>
     </body>
 </html>
