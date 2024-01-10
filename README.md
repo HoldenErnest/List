@@ -10,5 +10,10 @@ setup server, determine architecture for clients
 - allow saving lists to server
 - allow sharing of lists
 
+# Setup
+- make sure node is installed
+- Clone this repo
+- run with `npm start`
+- package with `npm run make` (might have to do 2 lines before this)
 
-
+https://www.electronjs.org/docs/latest/tutorial/quick-start
