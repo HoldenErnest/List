@@ -1,4 +1,14 @@
 # List
 Keep track of shows, give them ratings and descriptions
 
-most likely I need to read up more on Angular, could be interesting to get this hosted so multiple people can see eachothers lists
+# TODO
+setup basic UI (menu buttons and layout)
+- save created list to a file
+- read list from a file
+setup server, determine architecture for clients
+- create sign in for clients
+- allow saving lists to server
+- allow sharing of lists
+
+
+
