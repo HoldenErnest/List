@@ -1,3 +1,6 @@
+// Holden Ernest - 1/12/2024
+// simple script to handle the front end of logging in
+
 const {ipcRenderer} = require('electron');
 
 let login = document.getElementById('login');
