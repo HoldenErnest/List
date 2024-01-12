@@ -2,6 +2,9 @@
 // This handles all of the actual application proccesses
 
 const {ipcRenderer} = require('electron');
+const fs = require("fs");
+const path = require('node:path');
+
 
 const saveBtn = document.getElementById("save");
 const exitBtn = document.getElementById("exit");
@@ -20,14 +23,16 @@ function onButtonExit() {
 }
 
 function retrieveList() { // this will be later loaded from a server instead of local
-    var csvString = ipcRenderer.send('load-list', 'templist');
-    if (csvString == null) {
-        console.error("problem loading the file: output is null");
-        return;
-    }
-    console.log(csvString);
-    var listArray = parseToArray(csvString,',');
-    console.log(listArray);
+    fs.readFile(path.join(__dirname, 'templist.csv'), 'utf8', function (err, data) {
+        if (err) return console.error(err);
+        // data is the contents of the text file we just read
+        console.log(data);
+        var listArray = parseToArray(data,',');
+        console.log(listArray);
+        // I guess just use in the async function?
+        // load each list item here
+    });
+
 }
 
 function parseToArray(stringVal, splitter) {

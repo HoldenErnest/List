@@ -32,10 +32,9 @@ ipcMain.on('attempt-login', (event, username, password) => { // open specified p
         createWindow('index');
     }
 })
-ipcMain.on('load-list', (event, fileName) => { // load a specific list to the page
+ipcMain.on('load-list', async (event, fileName) => { // load a specific list to the page
     // Not working :(
     console.log(`loading list: ${fileName}.csv`)
-    return fs.readFileSync(`${fileName}.csv`).toString('utf8');
 })
 const correctLoginCreds = (username, password) => {
     
