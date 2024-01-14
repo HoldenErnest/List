@@ -1,0 +1,91 @@
+/* Holden Ernest - 1/13/2024 */
+
+h2 {
+  color: white;
+}
+body {
+  background-color: #333;
+}
+
+/* Topper Menu */
+#menu-items {
+  /*outline: 2px solid white;*/
+  width: 100%;
+  height: 50px;
+  background-color: #111;
+  overflow: hidden;
+  white-space: nowrap;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  text-align: right;
+}
+#menu-items > * {
+  height: 100%;
+}
+#menu-items a {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+#menu-items a:hover {
+  background-color: #777;
+  cursor: pointer;
+}
+
+/* Footer */
+#footer {
+  position: absolute;
+  bottom: 7px;
+  font-size: 15px;
+}
+
+/* List Elements */
+#list-items {
+  overflow-y: auto;
+}
+#list-items .item {
+  background-color: #222;
+  margin: 7px;
+  height: 30px;
+  padding: 7px;
+  /*outline: 1px solid orange;*/
+  display: flex;
+  align-items: center;
+}
+#list-items .item:hover {
+  background-color: #777;
+  cursor: pointer;
+}
+
+/* Sub elements inside of each item (these may not be used depending on the list type) */
+.item>* {
+  color: gainsboro;
+  padding: 5px;
+  margin: auto;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.item .item-id {
+  overflow: visible;
+  margin-right: 0px;
+  width: 50px;
+}
+.item .item-title {
+  /* NOT IMPLEMENTED */
+}
+.item .item-tags {
+  text-align: center;
+  font-style: oblique;
+}
+.item .item-rating {
+  margin-right: 0px;
+  margin-left: auto;
+  text-align: right;
+  width: 100px;
+  overflow: visible;
+}
