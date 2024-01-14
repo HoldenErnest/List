@@ -1,6 +1,8 @@
 // Holden Ernest - 1/11/2024
 // This has access to both the DOM and electron
 
+//const { contextBridge, ipcRenderer } = require("electron");
+
 window.addEventListener('DOMContentLoaded', () => {
     
     const replaceText = (selector, text) => {
@@ -11,4 +13,24 @@ window.addEventListener('DOMContentLoaded', () => {
     for (const dependency of ['chrome', 'node', 'electron']) { // replace text with certain ID(chrome-version ect)
         replaceText(`${dependency}-version`, process.versions[dependency]);
     }
-})
+});
+
+/*
+contextBridge.exposeInMainWorld(
+    "api", {
+        send: (channel, data) => {
+            // whitelist channels
+            let validChannels = ["toMain"];
+            if (validChannels.includes(channel)) {
+                ipcRenderer.send(channel, data);
+            }
+        },
+        receive: (channel, func) => {
+            let validChannels = ["fromMain"];
+            if (validChannels.includes(channel)) {
+                // Deliberately strip event as it includes `sender` 
+                ipcRenderer.on(channel, (event, ...args) => func(...args));
+            }
+        }
+    }
+);*/

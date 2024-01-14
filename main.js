@@ -18,12 +18,24 @@ const createWindow = (fileName) => { // function to make the window
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
         }
     })
     win.loadFile(`${fileName}.html`)
     mainWindow = win;
 }
+
+/*
+ipcMain.on("toMain", (event, args) => {
+    fs.readFile("path/to/file", (error, data) => {
+      // Do something with file contents
+  
+      // Send result back to renderer process
+      win.webContents.send("fromMain", responseObj);
+    });
+});
+*/
 
 ipcMain.on('attempt-login', (event, username, password) => { // open specified page
     console.log(`attempting to log in as: ${username}, (${password})`);
@@ -32,10 +44,7 @@ ipcMain.on('attempt-login', (event, username, password) => { // open specified p
         createWindow('index');
     }
 })
-ipcMain.on('load-list', async (event, fileName) => { // load a specific list to the page
-    // Not working :(
-    console.log(`loading list: ${fileName}.csv`)
-})
+
 const correctLoginCreds = (username, password) => {
     
     // TODO: MAKE SURE THE LOCAL USERNAME AND PASSWORD YIELD A REAL ACCOUNT FOUND ON THE SERVER

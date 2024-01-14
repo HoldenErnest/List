@@ -1,14 +1,17 @@
 /* Holden Ernest - 1/13/2024 */
 
-h2 {
-  color: white;
-}
+
 body {
   background-color: #333;
 }
 body::-webkit-scrollbar {
   display: none;
 }
+#placeholder-item {
+  display: none !important;
+}
+
+
 /* Topper Menu */
 #menu-items {
   /*outline: 2px solid white;*/
@@ -22,6 +25,7 @@ body::-webkit-scrollbar {
   top: 0px;
   left: 0px;
   text-align: right;
+  user-select: none;
 }
 #menu-items > * {
   height: 100%;
