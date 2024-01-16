@@ -1,4 +1,5 @@
 {
     "uuid": "12345",
-    "password": "Th3Pass"
+    "password": "Th3Pass",
+    "lastList": "templist"
 }

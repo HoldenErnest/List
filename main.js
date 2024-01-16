@@ -17,7 +17,7 @@ const createWindow = (fileName) => { // function to make the window
         height: 600,
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false,
+            contextIsolation: true,
             enableRemoteModule: false,
             preload: path.join(__dirname, 'preload.js')
         }
@@ -26,25 +26,15 @@ const createWindow = (fileName) => { // function to make the window
     mainWindow = win;
 }
 
-/*
-ipcMain.on("toMain", (event, args) => {
-    fs.readFile("path/to/file", (error, data) => {
-      // Do something with file contents
-  
-      // Send result back to renderer process
-      win.webContents.send("fromMain", responseObj);
-    });
-});
-*/
 
-ipcMain.on('attempt-login', (event, username, password) => { // open specified page
-    console.log(`attempting to log in as: ${username}, (${password})`);
-    if (correctLoginCreds(username, password)) {
+
+ipcMain.on('attempt-login', (event, loginInfo) => { // open specified page
+    console.log(`attempting to log in as: ${loginInfo.user}:${loginInfo.pass}`);
+    if (correctLoginCreds(loginInfo.user, loginInfo.pass)) {
         mainWindow.close();
         createWindow('index');
     }
 })
-
 const correctLoginCreds = (username, password) => {
     
     // TODO: MAKE SURE THE LOCAL USERNAME AND PASSWORD YIELD A REAL ACCOUNT FOUND ON THE SERVER
@@ -61,6 +51,37 @@ const isSignedIn = () => {
     return correctLoginCreds(username, password);
 }
 
+// EVENT - load the list 
+ipcMain.on('load-list', (event, fileName) => {
+    displayList(fileName);
+});
+ipcMain.on('load-last-list', (event) => {
+    displayList(db.get("lastList") + ".csv");
+});
+function displayList(fileName) {
+    fs.readFile(path.join(__dirname, fileName), 'utf8', function (err, data) {
+        if (err) return console.error(err);
+        // data is the contents of the text file we just read
+        var listArray = parseToArray(data,',');
+        console.log('loading ' + listArray.length + ' items to the list');
+        // display them to the page
+        mainWindow.webContents.send("display-list", listArray);
+    });
+}
+
+function parseToArray(stringVal, delim) {
+    const [keys, ...rest] = stringVal
+      .trim()
+      .split("\n")
+      .map((item) => item.split(delim));
+    const formedArr = rest.map((item) => {
+      const object = {};
+      keys.forEach((key, index) => (object[key] = item.at(index)));
+      return object;
+    });
+    return formedArr;
+}
+
 app.whenReady().then(() => { // Start the application
     if (isSignedIn())
         createWindow('index'); // if the user is signed in(locally), have them go to the home page, otherwise re-login
@@ -73,8 +94,6 @@ app.whenReady().then(() => { // Start the application
         }
     })
 })
-
-
 
 app.on('window-all-closed', () => { // CLOSE THE APP
     if (process.platform !== 'darwin') app.quit();
