@@ -40,9 +40,14 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
-    //clone.onclick = duplicate; // might need to add listeners to this clone
+    //clone.onclick = clickItem;
     original.parentNode.appendChild(clone);
 }
+/* // alternate click item method for if I need more functionality
+function clickItem() {
+    this.focus();
+    console.log("You've cliked to : " + this);
+}*/
 
 function retrieveAllListNames() { // get an array of the list names available to this user (so you can tell what list youre loading)
     

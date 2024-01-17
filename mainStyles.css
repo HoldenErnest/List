@@ -51,27 +51,29 @@ body::-webkit-scrollbar {
 
 /* List Elements */
 #list-items {
+  user-select: none;
   overflow-y: auto;
 }
 #list-items::-webkit-scrollbar {
   display: none;
 }
-#list-items .item {
-  background-color: #222;
+#list-items .item { /* The whole item, including the description */
+  background-color: #111;
   margin: 7px;
+}
+.item-stats { /* the top of any item (the main stats shown) */
+  background-color: #222;
   height: 30px;
-  padding: 7px;
-  /*outline: 1px solid orange;*/
   display: flex;
   align-items: center;
 }
-#list-items .item:hover {
+
+/* Sub elements inside of each item (these may not be used depending on the list type) */
+.item-stats:hover {
   background-color: #777;
   cursor: pointer;
 }
-
-/* Sub elements inside of each item (these may not be used depending on the list type) */
-.item>* {
+.item-stats>* {
   color: gainsboro;
   padding: 5px;
   margin: auto;
@@ -80,22 +82,46 @@ body::-webkit-scrollbar {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.item .item-id {
+.item-stats .item-id {
   overflow: visible;
   margin-right: 0px;
   width: 50px;
 }
-.item .item-title {
+.item-stats .item-title {
   /* NOT IMPLEMENTED */
 }
-.item .item-tags {
+.item-stats .item-tags {
   text-align: center;
   font-style: oblique;
 }
-.item .item-rating {
+.item-stats .item-rating {
   margin-right: 0px;
   margin-left: auto;
   text-align: right;
   width: 100px;
   overflow: visible;
+}
+/* Bottom half of an item, depth for an item*/
+.item>.item-dropdown {
+  display: flex;
+  height: 0px;
+  overflow: hidden;
+  transition-property: height;
+  transition-duration: 250ms;
+}
+.item:focus-within .item-dropdown{
+  height: 200px;
+}
+.item-dropdown>* {
+  margin: 7px;
+}
+
+.item-notes {
+  width: 50%;
+  height: 90%;
+  color: #BBB;
+  background-color: #222;
+}
+.item-image {
+  align-items: center;
 }
