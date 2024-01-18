@@ -10,6 +10,15 @@ body::-webkit-scrollbar {
 #placeholder-item {
   display: none !important;
 }
+textarea {
+  border: none;
+    overflow: auto;
+    outline: none;
+  -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    resize: none; /*remove the resize handle on the bottom right*/
+}
 
 
 /* Topper Menu */
@@ -20,18 +29,21 @@ body::-webkit-scrollbar {
   background-color: #333;
   border-bottom: 2px solid #222;
   overflow: hidden;
+  display: flex;
   white-space: nowrap;
   position: fixed;
   top: 0px;
   left: 0px;
-  text-align: right;
   user-select: none;
 }
-#menu-items > * {
-  height: 100%;
+#menu-items>* {
+  margin: auto;
 }
 #menu-items a {
-  display: inline-block;
+  height: 100%;
+  width:50px;
+  margin-left: 0px;
+  margin-right: 0px;
   color: white;
   text-align: center;
   padding: 14px;
@@ -40,6 +52,21 @@ body::-webkit-scrollbar {
 #menu-items a:hover {
   background-color: #777;
   cursor: pointer;
+}
+#searchbar {
+  color: white;
+  background-color: #222;
+  height: 70% !important;
+  width: 40%;
+  margin-left: 5px;
+  margin-right: auto; /*this will push all the menu buttons right*/
+  padding-left: 10px;
+  border: none;
+    overflow: auto;
+    outline: none;
+  -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
 }
 
 /* Footer */
@@ -50,6 +77,9 @@ body::-webkit-scrollbar {
 }
 
 /* List Elements */
+.item {
+  outline: none;
+}
 #list-items {
   user-select: none;
   overflow-y: auto;
@@ -70,7 +100,7 @@ body::-webkit-scrollbar {
 
 /* Sub elements inside of each item (these may not be used depending on the list type) */
 .item-stats:hover {
-  background-color: #777;
+  background-color: #444;
   cursor: pointer;
 }
 .item-stats>* {
@@ -117,6 +147,7 @@ body::-webkit-scrollbar {
 }
 
 .item-notes {
+  font-family: sans-serif;
   width: 50%;
   height: 90%;
   color: #BBB;

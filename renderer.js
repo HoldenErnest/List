@@ -3,11 +3,28 @@
 
 const saveBtn = document.getElementById("save");
 const loadListBtn = document.getElementById("load-list");
+const searchbar = document.getElementById("searchbar");
 
 //Event listeners
 saveBtn.addEventListener('click', onButtonSave);
 loadListBtn.addEventListener('click', loadList);
+searchbar.addEventListener('input', updateSearch);
+document.addEventListener('keypress', pressKey);
 
+function pressKey(event) {
+
+    var keycode = event.keyCode,
+    source = event.target,
+    key = String.fromCharCode(keycode);
+    exclude = ['input', 'textarea'];
+    
+    if (exclude.indexOf(source.tagName.toLowerCase()) === -1) {
+        if (keycode >= 97 && keycode <= 122) { // start typing in the searchbar if its a letter
+            focusSearch();
+        }
+        //console.log('You pressed ' + key + ' (keyCode: ' + keycode + ').');
+    }
+ }
 function onButtonSave() {
     alert('asdasfasfa');
 }
@@ -16,6 +33,16 @@ function loadList() {
     // have main load the list, which will eventually be brought back through "display-list"
     // this is essentially "IPCrenderer.send"
     // TODO: have it clear the previous list first 
+}
+function updateSearch() {
+    console.log("search: " + searchbar.value);
+    // TODO: loop all items, hide if they dont start with searchbar.value, or its #tag
+
+}
+function focusSearch() {
+    if (searchbar.value)
+        searchbar.value = "";
+    searchbar.focus();
 }
 
 window.api.receive('display-list', (listData) => {
@@ -40,6 +67,7 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
+    clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     //clone.onclick = clickItem;
     original.parentNode.appendChild(clone);
 }
