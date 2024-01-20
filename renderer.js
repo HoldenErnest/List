@@ -19,12 +19,15 @@ function pressKey(event) {
     exclude = ['input', 'textarea'];
     
     if (exclude.indexOf(source.tagName.toLowerCase()) === -1) {
-        if (keycode >= 97 && keycode <= 122) { // start typing in the searchbar if its a letter
+        if (isTypableKey(keycode)) { // start typing in the searchbar if its a letter
             focusSearch();
         }
-        //console.log('You pressed ' + key + ' (keyCode: ' + keycode + ').');
+        console.log('You pressed ' + key + ' (keyCode: ' + keycode + ').');
     }
- }
+}
+function isTypableKey(key) {
+    return (key >= 97 && key <= 122) || key == 35 || (key >= 48 && key <= 57);
+}
 function onButtonSave() {
     alert('asdasfasfa');
 }
@@ -35,9 +38,65 @@ function loadList() {
     // TODO: have it clear the previous list first 
 }
 function updateSearch() {
-    console.log("search: " + searchbar.value);
-    // TODO: loop all items, hide if they dont start with searchbar.value, or its #tag
+    var searched = searchbar.value;
+    if (searched == "") {
+        showAllItems();
+        return;
+    }
 
+    // find any tag or rating searches within this string
+    const ratingEx = /\d{1,2}\/10/;
+    var searchRating = ratingEx.exec(searched);
+    const tagsEx = /#\w+/g;
+    var searchTags = searched.match(tagsEx);
+    
+    // remove the other searched terms from the title search
+    if (searchRating) searched = searched.replace(ratingEx, "");
+    if (searchTags) searched = searched.replace(tagsEx, "");
+    searched = searched.replaceAll(/\s+/g, ' '); // remove all extraneous spaces from the title / clean it up
+    searched = searched.replaceAll("#", '')
+    searched = searched.trim();
+    if (searched == "") searched = null;
+
+    // loop through all DOM items (except the placeholder one)
+    var items = Array.from(document.getElementsByClassName("item"));
+    if (!items || items.length <= 1) { console.error("there are no items?"); return; }
+    console.log("hiding some elements");
+    for(let i = 1; i < items.length; i++) {
+        // Item components
+        let theItemTitle = items[i].getElementsByClassName("item-title")[0].innerHTML.toLowerCase();
+        let theItemRating = items[i].getElementsByClassName("item-rating")[0].innerHTML.toLowerCase();
+        let theItemTags = items[i].getElementsByClassName("item-tags")[0].innerHTML.toLowerCase();
+
+        // test if the item has your search
+        let hasSearchedTitle = (!searched || theItemTitle.includes(searched.toLowerCase()));
+        let hasSearchedRating = (!searchRating || theItemRating == searchRating);
+        let hasSearchedTags = () => {
+            if (!searchTags) return true;
+            console.log(searchTags.length + " is the leng")
+            for (let i = 0; i < searchTags.length; i++){ // if any of the searched tags arent in the item, hide it
+                searchTags[i] = searchTags[i].replace("#","");
+                console.log(searchTags[i] + " is in " + theItemTags + ": " + theItemTags.toLowerCase().includes(searchTags[i].toLowerCase()));
+                if (!theItemTags.toLowerCase().includes(searchTags[i].toLowerCase())) return false;
+            }
+            return true;
+        }
+        console.log(hasSearchedTitle + ", " + hasSearchedRating + ", " + hasSearchedTags());
+        if ( hasSearchedTitle && hasSearchedRating && hasSearchedTags()) {
+            items[i].style.display = 'block';
+        } else {
+            items[i].style.display = 'none';
+        }
+    }
+    
+}
+function showAllItems() {
+    console.log("all items showing");
+    var items = document.getElementsByClassName("item");
+    // skip the placeholder item
+    for(let i = 1; i < items.length; i++) {
+        items[i].style.display = 'block';
+    }
 }
 function focusSearch() {
     if (searchbar.value)

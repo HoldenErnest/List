@@ -88,7 +88,7 @@ textarea {
   display: none;
 }
 #list-items .item { /* The whole item, including the description */
-  background-color: #111;
+  background-color: #222;
   margin: 7px;
 }
 .item-stats { /* the top of any item (the main stats shown) */
@@ -135,12 +135,14 @@ textarea {
 .item>.item-dropdown {
   display: flex;
   height: 0px;
+  
   overflow: hidden;
   transition-property: height;
   transition-duration: 250ms;
 }
 .item:focus-within .item-dropdown{
   height: 200px;
+  border-top: 2px solid #111;
 }
 .item-dropdown>* {
   margin: 7px;
@@ -151,7 +153,7 @@ textarea {
   width: 50%;
   height: 90%;
   color: #BBB;
-  background-color: #222;
+  background-color: #111;
 }
 .item-image {
   align-items: center;
