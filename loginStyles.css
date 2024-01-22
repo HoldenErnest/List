@@ -1,0 +1,58 @@
+/* Holden Ernest - 1/22/2024 */
+
+body {
+    background-color: #333;
+    color: gainsboro;
+    user-select: none;
+}
+body::-webkit-scrollbar {
+    display: none;
+  }
+
+#all-center {
+    
+    width: 50%;
+    text-align: center;
+    margin: auto;
+    margin-top: 15%;
+}
+#title {
+    padding-bottom: 30px;
+    font-size: 30px;
+    font-weight: bold;
+}
+#help-text {
+    padding-top: 50px;
+    margin:auto;
+    width: 90%;
+    color: grey;
+}
+input {
+    padding-left: 5px;
+    height: 25px;
+    width: 200px;
+    overflow: auto;
+    outline: none;
+  -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    background-color: #444;
+    color: #CCC;
+    border: 2px solid #222;
+}
+#login {
+    color: grey;
+    width: 50px;
+    height: 30px;
+    background-color: #222;
+    border: none;
+    overflow: auto;
+    outline: none;
+  -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+#login:hover {
+    cursor: pointer;
+    background-color: #444;
+}

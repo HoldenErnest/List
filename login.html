@@ -5,21 +5,21 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="loginStyles.css">
     <title>ChimpList Login</title>
   </head>
   <body>
-    <h1>Login:</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-    <br><br>
-    <form>
-      <label for="loginUser">Username:</label>
-      <input type="text" id="loginUser" name="loginUser" required><br><br>
-      <label for="loginPass">Password:</label>
-      <input type="password" id="loginPass" name="loginPass" required><br><br>
-      <button id="login">Login</button>
-    </form>
+    <div id="all-center">
+      <div id="title">Login</div>
+      <form>
+        <label for="loginUser">Username:</label>
+        <input type="text" id="loginUser" name="loginUser" maxlength="30" placeholder="username.." required><br><br>
+        <label for="loginPass">Password:</label>
+        <input type="password" id="loginPass" name="loginPass" maxlength="30" placeholder="password.." required><br><br>
+        <button id="login">Login</button>
+      </form>
+      <div id="help-text">If you do not have an account and would like one, message the server owner</div>
+    </div>
 
     <script src="./login.js"></script>
   </body>
