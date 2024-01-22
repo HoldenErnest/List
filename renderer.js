@@ -4,32 +4,34 @@
 const saveBtn = document.getElementById("save");
 const loadListBtn = document.getElementById("load-list");
 const searchbar = document.getElementById("searchbar");
+const escapeFocus = document.getElementById("escape-focus");
 
 //Event listeners
 saveBtn.addEventListener('click', onButtonSave);
 loadListBtn.addEventListener('click', loadList);
 searchbar.addEventListener('input', updateSearch);
-document.addEventListener('keypress', pressKey);
 
-function pressKey(event) {
-
-    var keycode = event.keyCode,
-    source = event.target,
-    key = String.fromCharCode(keycode);
+document.onkeydown = function(event) {
+    if (event.key == "Escape") {//27 is the code for escape
+        escapePress();
+        return;
+    }
+    var source = event.target;
     exclude = ['input', 'textarea'];
-    
     if (exclude.indexOf(source.tagName.toLowerCase()) === -1) {
-        if (isTypableKey(keycode)) { // start typing in the searchbar if its a letter
+        if (isTypableKey(event.key)) { // start typing in the searchbar if its a letter
             focusSearch();
         }
-        console.log('You pressed ' + key + ' (keyCode: ' + keycode + ').');
     }
-}
+};
 function isTypableKey(key) {
-    return (key >= 97 && key <= 122) || key == 35 || (key >= 48 && key <= 57);
+    return (key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z') || key == '#' || (key >= '0' && key <= '9');
 }
 function onButtonSave() {
     alert('asdasfasfa');
+}
+function escapePress() {
+    escapeFocus.focus();
 }
 function loadList() {
     window.api.send("load-list", 'templist.csv');

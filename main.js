@@ -29,14 +29,13 @@ const createWindow = (fileName) => { // function to make the window
 
 
 ipcMain.on('attempt-login', (event, loginInfo) => { // open specified page
-    console.log(`attempting to log in as: ${loginInfo.user}:${loginInfo.pass}`);
     if (correctLoginCreds(loginInfo.user, loginInfo.pass)) {
         mainWindow.close();
         createWindow('index');
     }
-})
+});
 const correctLoginCreds = (username, password) => {
-    
+    console.log(`attempting to log in: [user:${username}, pass:${password}]`);
     // TODO: MAKE SURE THE LOCAL USERNAME AND PASSWORD YIELD A REAL ACCOUNT FOUND ON THE SERVER
     if (password == 'Th3Pass' && username == '12345') {
         db.set('uuid', username);
@@ -63,7 +62,6 @@ function displayList(fileName) {
         if (err) return console.error(err);
         // data is the contents of the text file we just read
         var listArray = parseToArray(data,',');
-        console.log('loading ' + listArray.length + ' items to the list');
         // display them to the page
         mainWindow.webContents.send("display-list", listArray);
     });
