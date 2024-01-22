@@ -48,7 +48,7 @@ function updateSearch() {
     const ratingEx = /\d{1,2}\/10/;
     var searchRating = ratingEx.exec(searched);
     const tagsEx = /#\w+/g;
-    var searchTags = searched.match(tagsEx);
+    var searchTags = searched.match(tagsEx); // to get an array of multiple, you need to use match
     
     // remove the other searched terms from the title search
     if (searchRating) searched = searched.replace(ratingEx, "");
@@ -61,7 +61,6 @@ function updateSearch() {
     // loop through all DOM items (except the placeholder one)
     var items = Array.from(document.getElementsByClassName("item"));
     if (!items || items.length <= 1) { console.error("there are no items?"); return; }
-    console.log("hiding some elements");
     for(let i = 1; i < items.length; i++) {
         // Item components
         let theItemTitle = items[i].getElementsByClassName("item-title")[0].innerHTML.toLowerCase();
@@ -76,12 +75,10 @@ function updateSearch() {
             console.log(searchTags.length + " is the leng")
             for (let i = 0; i < searchTags.length; i++){ // if any of the searched tags arent in the item, hide it
                 searchTags[i] = searchTags[i].replace("#","");
-                console.log(searchTags[i] + " is in " + theItemTags + ": " + theItemTags.toLowerCase().includes(searchTags[i].toLowerCase()));
                 if (!theItemTags.toLowerCase().includes(searchTags[i].toLowerCase())) return false;
             }
             return true;
         }
-        console.log(hasSearchedTitle + ", " + hasSearchedRating + ", " + hasSearchedTags());
         if ( hasSearchedTitle && hasSearchedRating && hasSearchedTags()) {
             items[i].style.display = 'block';
         } else {
@@ -91,7 +88,6 @@ function updateSearch() {
     
 }
 function showAllItems() {
-    console.log("all items showing");
     var items = document.getElementsByClassName("item");
     // skip the placeholder item
     for(let i = 1; i < items.length; i++) {

@@ -39,11 +39,20 @@ textarea {
 #menu-items>* {
   margin: auto;
 }
-#menu-items a {
+#menu-buttons {
+  height:auto;
+  width:auto;
+  margin-left: auto;
+  margin-right: 0px;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  text-decoration: none;
+}
+#menu-buttons a {
   height: 100%;
   width:50px;
-  margin-left: 0px;
-  margin-right: 0px;
+  margin: 0px;
   color: white;
   text-align: center;
   padding: 14px;
@@ -62,11 +71,11 @@ textarea {
   margin-right: auto; /*this will push all the menu buttons right*/
   padding-left: 10px;
   border: none;
-    overflow: auto;
-    outline: none;
+  overflow: auto;
+  outline: none;
   -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 /* Footer */
@@ -140,7 +149,7 @@ textarea {
   transition-property: height;
   transition-duration: 250ms;
 }
-.item:focus-within .item-dropdown{
+.item:focus-within .item-dropdown {
   height: 200px;
   border-top: 2px solid #111;
 }
@@ -150,10 +159,11 @@ textarea {
 
 .item-notes {
   font-family: sans-serif;
+  padding: 4px;
   width: 50%;
   height: 90%;
-  color: #BBB;
-  background-color: #111;
+  color:  white;
+  background-color: #444;
 }
 .item-image {
   align-items: center;
