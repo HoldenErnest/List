@@ -5,11 +5,32 @@ const saveBtn = document.getElementById("save");
 const loadListBtn = document.getElementById("load-list");
 const searchbar = document.getElementById("searchbar");
 const escapeFocus = document.getElementById("escape-focus");
+const sortBtn = document.getElementById("sort-list");
 
 //Event listeners
 saveBtn.addEventListener('click', onButtonSave);
 loadListBtn.addEventListener('click', loadList);
 searchbar.addEventListener('input', updateSearch);
+sortBtn.addEventListener('click', sort_all);
+
+function sort_all() {
+    var toSort = document.getElementById('list-items').children;
+    toSort = Array.prototype.slice.call(toSort, 0);
+    toSort.sort(function(a, b) {
+        const nameA = a.getElementsByClassName("item-title")[0].innerHTML.toLowerCase(); // ignore upper and lowercase
+        const nameB = b.getElementsByClassName("item-title")[0].innerHTML.toLowerCase(); // ignore upper and lowercase
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+    });
+    var parent = document.getElementById('list-items');
+    parent.innerHTML = "";
+
+    for(var i = 0, l = toSort.length; i < l; i++) {
+        parent.appendChild(toSort[i]);
+        toSort[i].getElementsByClassName("item-id")[0].innerHTML = i+1;
+    }
+}
 
 document.onkeydown = function(event) {
     if (event.key == "Escape") {//27 is the code for escape
@@ -37,7 +58,7 @@ function loadList() {
     window.api.send("load-list", 'templist.csv');
     // have main load the list, which will eventually be brought back through "display-list"
     // this is essentially "IPCrenderer.send"
-    // TODO: have it clear the previous list first 
+    // TODO: have it clear the previous list first once you can choose different lists
 }
 function updateSearch() {
     var searched = searchbar.value;
@@ -120,13 +141,14 @@ function displayListItem(itemData, itemID) {
     var clone = original.cloneNode(true); // "deep" clone
     clone.id = '';
     // set all of these clones child divs to use the listItem information
-    clone.getElementsByClassName("item-id")[0].innerHTML = itemID | document.querySelectorAll('#list-items .item').length; // probably better to do this query once before the for loop earlier
+    clone.getElementsByClassName("item-id")[0].innerHTML = itemID | document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     //clone.onclick = clickItem;
-    original.parentNode.appendChild(clone);
+    var parent = document.getElementById('list-items');
+    parent.appendChild(clone);
 }
 /* // alternate click item method for if I need more functionality
 function clickItem() {

@@ -16,26 +16,29 @@
       <div id="menu-buttons">
         <a id="save">save</a>
         <a id="load-list">load</a>
-        <a id="new-list">new</a>
+        <a id="sort-list">sort</a>
         <a id="new-item">add item</a>
       </div>
     </div>
+
+    <!-- This is a placeholder item and will not be displayed vv -->
+    <div class="item" id="placeholder-item" tabindex="-1">
+      <div class="item-stats">
+        <div class="item-id">-</div>
+        <div class="item-title">New List Item</div>
+        <div class="item-tags">No Tags</div>
+        <div class="item-rating">-/10</div>
+      </div>
+      <div class="item-dropdown">
+        <textarea class="item-notes" name="item-notes" maxlength="500" placeholder="empty notes.."></textarea>
+        <img class="item-image" src="testimage.jpe" alt="Some Image">
+      </div>
+    </div>
+    <!-- This is a placeholder item and will not be displayed ^^ -->
     
     <br><br><br>
     <div id="list-items">
-      <!-- This is a placeholder item and will not be displayed -->
-      <div class="item" id="placeholder-item" tabindex="-1">
-        <div class="item-stats">
-          <div class="item-id">-</div>
-          <div class="item-title">New List Item</div>
-          <div class="item-tags">No Tags</div>
-          <div class="item-rating">-/10</div>
-        </div>
-        <div class="item-dropdown">
-          <textarea class="item-notes" name="item-notes" maxlength="500" placeholder="empty notes.."></textarea>
-          <img class="item-image" src="testimage.jpe" alt="Some Image">
-        </div>
-      </div>
+      
     </div>
 
     <div id="footer">
