@@ -151,7 +151,7 @@ textarea {
 }
 .item:focus-within .item-dropdown {
   height: 200px;
-  border-top: 2px solid #111;
+  border-top: 2px solid #1A1A1A;
 }
 .item-dropdown>* {
   margin: 7px;
@@ -162,11 +162,23 @@ textarea {
   padding: 4px;
   width: 50%;
   height: 90%;
+  margin-top: auto;
+  margin-bottom: auto;
   color:  white;
   background-color: #444;
 }
 .item-image {
+  height:90%;
   align-items: center;
+}
+.item-date {
+  margin-top:auto;
+  margin-bottom: 3px;
+  margin-right:3px;
+  margin-left:auto;
+  user-select: text;
+  color: #555;
+  font-size: 15px;
 }
 
 select {
@@ -190,7 +202,6 @@ select {
   font-weight: bold;
 }
 select option {
-  
   background-color: #111;
   color: white;
 }

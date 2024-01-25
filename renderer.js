@@ -25,6 +25,9 @@ function sort_all() {
             console.log(0,nameA.slice(nameA.indexOf('/')));
             nameA = parseInt(nameA.slice(0,nameA.indexOf('/')));
             nameB = parseInt(nameB.slice(0,nameB.indexOf('/')));
+        } else if (sortBtn.value == "date") {
+            nameA = Date.parse(nameA);
+            nameB = Date.parse(nameB);
         }
         if (nameA < nameB) return -sortOrder;
         if (nameA > nameB) return sortOrder;
@@ -136,7 +139,7 @@ window.api.receive('display-list', (listData) => {
     displayListItems(listData);
 });
 function displayListItems(listData) {
-    let itemCount = document.querySelectorAll('#list-items .item').length;
+    let itemCount = document.querySelectorAll('#list-items .item').length + 1;
     for(let i = 0; i < listData.length; i++) {
         displayListItem(listData[i], itemCount+i);
     }
@@ -148,11 +151,12 @@ function displayListItem(itemData, itemID) {
     var clone = original.cloneNode(true); // "deep" clone
     clone.id = '';
     // set all of these clones child divs to use the listItem information
-    clone.getElementsByClassName("item-id")[0].innerHTML = itemID | document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
+    clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
+    clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
     //clone.onclick = clickItem;
     var parent = document.getElementById('list-items');
     parent.appendChild(clone);

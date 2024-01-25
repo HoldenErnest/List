@@ -61,17 +61,17 @@ function displayList(fileName) {
     fs.readFile(path.join(__dirname, fileName), 'utf8', function (err, data) {
         if (err) return console.error(err);
         // data is the contents of the text file we just read
-        var listArray = parseToArray(data,',');
+        var listArray = parseToArray(data);
         // display them to the page
         mainWindow.webContents.send("display-list", listArray);
     });
 }
 
-function parseToArray(stringVal, delim) {
+function parseToArray(stringVal) {
     const [keys, ...rest] = stringVal
       .trim()
       .split("\n")
-      .map((item) => item.split(delim));
+      .map((item) => item.split(','));
     const formedArr = rest.map((item) => {
       const object = {};
       keys.forEach((key, index) => (object[key] = item.at(index)));
