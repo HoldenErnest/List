@@ -11,16 +11,23 @@ const sortBtn = document.getElementById("sort-list");
 saveBtn.addEventListener('click', onButtonSave);
 loadListBtn.addEventListener('click', loadList);
 searchbar.addEventListener('input', updateSearch);
-sortBtn.addEventListener('click', sort_all);
+document.getElementById("sort-list").onchange = sort_all;
+document.getElementById("sort-order").onchange = sort_all;
 
 function sort_all() {
+    var sortOrder = document.getElementById("sort-order").value;
     var toSort = document.getElementById('list-items').children;
     toSort = Array.prototype.slice.call(toSort, 0);
     toSort.sort(function(a, b) {
-        const nameA = a.getElementsByClassName("item-title")[0].innerHTML.toLowerCase(); // ignore upper and lowercase
-        const nameB = b.getElementsByClassName("item-title")[0].innerHTML.toLowerCase(); // ignore upper and lowercase
-        if (nameA < nameB) return -1;
-        if (nameA > nameB) return 1;
+        let nameA = a.getElementsByClassName(`item-${sortBtn.value}`)[0].innerHTML.toLowerCase();
+        let nameB = b.getElementsByClassName(`item-${sortBtn.value}`)[0].innerHTML.toLowerCase();
+        if (sortBtn.value == "rating") {
+            console.log(0,nameA.slice(nameA.indexOf('/')));
+            nameA = parseInt(nameA.slice(0,nameA.indexOf('/')));
+            nameB = parseInt(nameB.slice(0,nameB.indexOf('/')));
+        }
+        if (nameA < nameB) return -sortOrder;
+        if (nameA > nameB) return sortOrder;
         return 0;
     });
     var parent = document.getElementById('list-items');
@@ -110,17 +117,17 @@ function updateSearch() {
     }
     
 }
+function focusSearch() {
+    if (searchbar.value)
+        searchbar.value = "";
+    searchbar.focus();
+}
 function showAllItems() {
     var items = document.getElementsByClassName("item");
     // skip the placeholder item
     for(let i = 1; i < items.length; i++) {
         items[i].style.display = 'block';
     }
-}
-function focusSearch() {
-    if (searchbar.value)
-        searchbar.value = "";
-    searchbar.focus();
 }
 
 window.api.receive('display-list', (listData) => {
