@@ -19,6 +19,18 @@ textarea {
     box-shadow: none;
     resize: none; /*remove the resize handle on the bottom right*/
 }
+input {
+  border: none;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  color: white;
+  background-color: #111;
+  border: 1px dotted grey;
+  padding: 3px;
+}
 
 
 /* Topper Menu */
