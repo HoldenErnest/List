@@ -1,9 +1,7 @@
 /* Holden Ernest - 1/13/2024 */
 
 
-body {
-  background-color: #333;
-}
+
 body::-webkit-scrollbar {
   display: none;
 }
@@ -32,47 +30,49 @@ input {
   padding: 3px;
 }
 
-
-/* Topper Menu */
-#menu-items {
-  /*outline: 2px solid white;*/
-  width: 100%;
+body {
+  background-color: #333;
+}
+/* START SIDEBAR */
+#sidebar {
+  width: 60px;
+  height: 700px;
+  background-color: #222;
+  overflow:hidden;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  position:fixed;
+  left:0px;
+  top:0px;
+  align-items: center;
+}
+.sidebar-list {
+  height: 50px;
+  width: 50px;
+  background-color: green;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.sidebar-list:hover {
+  /*TODO: some animation*/
+}
+/* END SIDEBAR */
+/* START MENU */
+#menu {
   height: 50px;
   background-color: #333;
   border-bottom: 2px solid #222;
   overflow: hidden;
   display: flex;
+  justify-content: space-between;
   white-space: nowrap;
+  user-select: none;
   position: fixed;
   top: 0px;
-  left: 0px;
-  user-select: none;
-}
-#menu-items>* {
-  margin: auto;
-}
-#menu-buttons {
-  height:auto;
-  width:auto;
-  margin-left: auto;
-  margin-right: 0px;
-  color: white;
-  text-align: center;
-  padding: 14px;
-  text-decoration: none;
-}
-#menu-buttons a {
-  height: 100%;
-  width:50px;
-  margin: 0px;
-  color: white;
-  text-align: center;
-  padding: 14px;
-  text-decoration: none;
-}
-#menu-items a:hover {
-  background-color: #777;
-  cursor: pointer;
+  left: 60px;
+  right: 0px;
+  align-items: center;
 }
 #searchbar {
   color: white;
@@ -80,7 +80,6 @@ input {
   height: 70% !important;
   width: 40%;
   margin-left: 5px;
-  margin-right: auto; /*this will push all the menu buttons right*/
   padding-left: 10px;
   border: none;
   overflow: auto;
@@ -89,6 +88,34 @@ input {
   -moz-box-shadow: none;
   box-shadow: none;
 }
+select { /*the dropdown*/
+  display: inline-block;
+  border: none;
+  overflow: auto;
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  text-indent: 1px;
+  text-overflow: '';
+
+  background-color: #222;
+  margin-left:0px;
+  margin-right:0px;
+  color: gainsboro;
+  padding: 5px;
+  font-weight: bold;
+}
+select option {
+  background-color: #111;
+  color: white;
+}
+option:hover {
+  background-color: #444;
+}
+/* END MENU */
 
 /* Footer */
 #footer {
@@ -102,6 +129,7 @@ input {
   outline: none;
 }
 #list-items {
+  margin-left: 60px;
   user-select: none;
   overflow-y: auto;
 }
@@ -191,32 +219,4 @@ input {
   user-select: text;
   color: #555;
   font-size: 15px;
-}
-
-select {
-  display: inline-block;
-  border: none;
-  overflow: auto;
-  outline: none;
-  -webkit-appearance: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  resize: none;
-  text-indent: 1px;
-  text-overflow: '';
-
-  background-color: #222;
-  margin-left:0px;
-  margin-right:0px;
-  color: gainsboro;
-  padding: 5px;
-  font-weight: bold;
-}
-select option {
-  background-color: #111;
-  color: white;
-}
-option:hover {
-  background-color: #444;
 }

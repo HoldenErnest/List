@@ -8,8 +8,8 @@ const escapeFocus = document.getElementById("escape-focus");
 const sortBtn = document.getElementById("sort-list");
 
 //Event listeners
-saveBtn.addEventListener('click', onButtonSave);
-loadListBtn.addEventListener('click', loadList);
+//saveBtn.addEventListener('click', onButtonSave);
+//loadListBtn.addEventListener('click', loadList);
 searchbar.addEventListener('input', updateSearch);
 document.getElementById("sort-list").onchange = sort_all;
 document.getElementById("sort-order").onchange = sort_all;

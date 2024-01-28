@@ -10,30 +10,6 @@
   </head>
   <body>
     <div id="escape-focus" tabindex="-1"></div>
-    
-    <div id="menu-items">
-      <input id="searchbar" title="Filter searches further by using #tags or a rating ~/10" type="text" name="searchbar" placeholder="search.. #" maxlength="50">
-      <div id="menu-buttons">
-        <a id="save">save</a>
-        <a id="load-list">load</a>
-        <a id="new-item">add item</a>
-
-        <label for="sorting">Sort:</label>
-        <select name="sorting" id="sort-list">
-          <option value="date">Date</option>
-          <option value="title">Title</option>
-          <option value="rating">Rating</option>
-          <option value="tags">Tags</option>
-        </select>
-        <select name="sort-order" id="sort-order">
-          <option value="1">▲</option>
-          <option value="-1">▼</option>
-        </select>
-
-        
-      </div>
-    </div>
-
     <!-- This is a placeholder item and will not be displayed vv -->
     <div class="item" id="placeholder-item" tabindex="-1">
       <div class="item-stats">
@@ -49,11 +25,35 @@
       </div>
     </div>
     <!-- This is a placeholder item and will not be displayed ^^ -->
-    
-    <br><br><br>
-    <div id="list-items">
-      
+
+    <!--Start of the actual page-->
+    <div id="sidebar">
+      <div class="sidebar-list" value="aList"></div>
+      <div class="sidebar-list" value="aList2"></div>
+      <div class="sidebar-list" value="aList3"></div>
     </div>
+
+    <!--Top menu-->
+    <div id="menu">
+      <input id="searchbar" title="Filter searches further by using #tags or a rating ~/10" type="text" name="searchbar" placeholder="search.. #" maxlength="50">
+      <div id="menu-buttons">
+
+        <label for="sorting">Sort:</label>
+        <select name="sorting" id="sort-list">
+          <option value="date">Date</option>
+          <option value="title">Title</option>
+          <option value="rating">Rating</option>
+          <option value="tags">Tags</option>
+        </select>
+        <select name="sort-order" id="sort-order"><!--TODO: make this a toggle-->
+          <option value="1">▲</option>
+          <option value="-1">▼</option>
+        </select>
+      </div>
+    </div>
+
+    <br><br><br>
+    <div id="list-items"></div> <!--where the items live-->
 
     <div id="footer">
       Testing Versions: [&nbsp;
