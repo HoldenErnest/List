@@ -193,7 +193,8 @@ option:hover {
   font-family: sans-serif;
   padding: 4px;
   margin: 7px;
-  width: 50%;
+  min-width: 300px;
+  width: 30%;
   height: 90%;
   margin-top: auto;
   margin-bottom: auto;
@@ -218,16 +219,18 @@ option:hover {
   margin-right: 0px;
   margin-left: auto;
   width: 30%;
-  border-left: 2px solid #1A1A1A;
+  /*border-left: 2px solid #1A1A1A;*/
   overflow: hidden;
 }
 .item-image div {
   /* alot of bs to get the edges to not blur*/
   height: 103%;
-  background-image: url("testimage.jpe");
+  /*background-image: url("testimage.jpe");*/
+  background: linear-gradient(to left, transparent, #222), url("testimage.jpe");
   filter: blur(0px);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   margin: -3px;
+  
 }
