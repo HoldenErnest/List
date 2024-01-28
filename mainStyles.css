@@ -194,15 +194,35 @@ option:hover {
   padding: 4px;
   margin: 7px;
   min-width: 300px;
-  width: 30%;
-  height: 90%;
-  margin-top: auto;
-  margin-bottom: auto;
+  width: 65%;
+  height: 70%;
   color: white;
   background-color: #333;
   overflow: hidden;
 }
+.item-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  position: absolute;
+  bottom:7px;
+  left:7px;
+  height: 30px;
+}
+.item-buttons div {
+  margin-right:7px;
+  height: auto;
+  width: 70px;
+  background-color: #333;
+  padding: 5px;
+  text-align: center;
+  color: white;
+}
+.item-buttons div:hover {
+  background-color: #444;
+}
 .item-date {
+  
   position: absolute;
   margin-top:auto;
   bottom:3px;
