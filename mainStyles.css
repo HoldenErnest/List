@@ -36,7 +36,7 @@ body {
 /* START SIDEBAR */
 #sidebar {
   width: 60px;
-  height: 700px;
+  height: 100%;
   background-color: #222;
   overflow:hidden;
   display: flex;
@@ -50,7 +50,7 @@ body {
 .sidebar-list {
   height: 50px;
   width: 50px;
-  background-color: green;
+  background-color: darkkhaki;
   border-radius: 5px;
   margin-top: 5px;
 }
@@ -125,11 +125,10 @@ option:hover {
 }
 
 /* List Elements */
-.item {
-  outline: none;
-}
 #list-items {
-  margin-left: 60px;
+  margin-top: 55px;
+  margin-left: 55px;
+  margin-right: -5px;
   user-select: none;
   overflow-y: auto;
 }
@@ -166,9 +165,6 @@ option:hover {
   margin-right: 0px;
   width: 50px;
 }
-.item-stats .item-title {
-  /* NOT IMPLEMENTED */
-}
 .item-stats .item-tags {
   text-align: center;
   font-style: oblique;
@@ -184,7 +180,7 @@ option:hover {
 .item>.item-dropdown {
   display: flex;
   height: 0px;
-  
+  position: relative; /*so the date can be absolute*/
   overflow: hidden;
   transition-property: height;
   transition-duration: 250ms;
@@ -193,30 +189,45 @@ option:hover {
   height: 200px;
   border-top: 2px solid #1A1A1A;
 }
-.item-dropdown>* {
-  margin: 7px;
-}
-
 .item-notes {
   font-family: sans-serif;
   padding: 4px;
+  margin: 7px;
   width: 50%;
   height: 90%;
   margin-top: auto;
   margin-bottom: auto;
-  color:  white;
-  background-color: #444;
-}
-.item-image {
-  height:90%;
-  align-items: center;
+  color: white;
+  background-color: #333;
+  overflow: hidden;
 }
 .item-date {
+  position: absolute;
   margin-top:auto;
-  margin-bottom: 3px;
-  margin-right:3px;
-  margin-left:auto;
+  bottom:3px;
+  right:3px;
   user-select: text;
-  color: #555;
+  color: #CCC;
   font-size: 15px;
+  text-shadow: 0 0 5px black, 0 0 6px black, 0 0 7px black;
+}
+.item-image {
+  align-self: right;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  margin-left: auto;
+  width: 30%;
+  border-left: 2px solid #1A1A1A;
+  overflow: hidden;
+}
+.item-image div {
+  /* alot of bs to get the edges to not blur*/
+  height: 103%;
+  background-image: url("testimage.jpe");
+  filter: blur(0px);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin: -3px;
 }
