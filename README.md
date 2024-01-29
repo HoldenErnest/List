@@ -9,6 +9,7 @@ setup server, determine architecture for clients
 - create sign in for clients
 - allow saving lists to server
 - allow sharing of lists
+- https://www.reddit.com/r/googlecloud/comments/126efns/is_the_google_images_api_still_available/
 
 # Setup
 - make sure node is installed
