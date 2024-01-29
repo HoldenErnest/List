@@ -8,8 +8,8 @@ const escapeFocus = document.getElementById("escape-focus");
 const sortBtn = document.getElementById("sort-list");
 
 //Event listeners
-saveBtn.addEventListener('click', onButtonSave);
-loadListBtn.addEventListener('click', loadList);
+//saveBtn.addEventListener('click', onButtonSave);
+//loadListBtn.addEventListener('click', loadList);
 searchbar.addEventListener('input', updateSearch);
 document.getElementById("sort-list").onchange = sort_all;
 document.getElementById("sort-order").onchange = sort_all;
@@ -41,7 +41,32 @@ function sort_all() {
         toSort[i].getElementsByClassName("item-id")[0].innerHTML = i+1;
     }
 }
-
+function makeEditable(item) {
+    item.getElementsByClassName("item-title")[0].ondblclick=function(){
+        var val=this.innerHTML;
+        var input=document.createElement("input");
+        input.value=val;
+        input.onblur=function(){
+            var val=this.value;
+            this.parentNode.innerHTML=val;
+        }
+        this.innerHTML="";
+        this.appendChild(input);
+        input.focus();
+    }
+    item.getElementsByClassName("item-tags")[0].ondblclick=function(){
+        var val=this.innerHTML;
+        var input=document.createElement("input");
+        input.value=val;
+        input.onblur=function(){
+            var val=this.value;
+            this.parentNode.innerHTML=val;
+        }
+        this.innerHTML="";
+        this.appendChild(input);
+        input.focus();
+    }
+}
 document.onkeydown = function(event) {
     if (event.key == "Escape") {//27 is the code for escape
         escapePress();
@@ -158,6 +183,7 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
     //clone.onclick = clickItem;
+    makeEditable(clone);
     var parent = document.getElementById('list-items');
     parent.appendChild(clone);
 }

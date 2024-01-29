@@ -1,9 +1,7 @@
 /* Holden Ernest - 1/13/2024 */
 
 
-body {
-  background-color: #333;
-}
+
 body::-webkit-scrollbar {
   display: none;
 }
@@ -19,48 +17,62 @@ textarea {
     box-shadow: none;
     resize: none; /*remove the resize handle on the bottom right*/
 }
+input {
+  border: none;
+  overflow: auto;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  color: white;
+  background-color: #111;
+  border: 1px dotted grey;
+  padding: 3px;
+}
 
-
-/* Topper Menu */
-#menu-items {
-  /*outline: 2px solid white;*/
-  width: 100%;
+body {
+  background-color: #333;
+}
+/* START SIDEBAR */
+#sidebar {
+  width: 60px;
+  height: 100%;
+  background-color: #222;
+  overflow:hidden;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  position:fixed;
+  left:0px;
+  top:0px;
+  align-items: center;
+}
+.sidebar-list {
+  height: 50px;
+  width: 50px;
+  background-color: darkkhaki;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.sidebar-list:hover {
+  /*TODO: some animation*/
+}
+/* END SIDEBAR */
+/* START MENU */
+#menu {
   height: 50px;
   background-color: #333;
   border-bottom: 2px solid #222;
   overflow: hidden;
   display: flex;
+  justify-content: space-between;
   white-space: nowrap;
+  user-select: none;
   position: fixed;
   top: 0px;
-  left: 0px;
-  user-select: none;
-}
-#menu-items>* {
-  margin: auto;
-}
-#menu-buttons {
-  height:auto;
-  width:auto;
-  margin-left: auto;
-  margin-right: 0px;
-  color: white;
-  text-align: center;
-  padding: 14px;
-  text-decoration: none;
-}
-#menu-buttons a {
-  height: 100%;
-  width:50px;
-  margin: 0px;
-  color: white;
-  text-align: center;
-  padding: 14px;
-  text-decoration: none;
-}
-#menu-items a:hover {
-  background-color: #777;
-  cursor: pointer;
+  left: 60px;
+  right: 0px;
+  align-items: center;
 }
 #searchbar {
   color: white;
@@ -68,7 +80,6 @@ textarea {
   height: 70% !important;
   width: 40%;
   margin-left: 5px;
-  margin-right: auto; /*this will push all the menu buttons right*/
   padding-left: 10px;
   border: none;
   overflow: auto;
@@ -77,6 +88,34 @@ textarea {
   -moz-box-shadow: none;
   box-shadow: none;
 }
+select { /*the dropdown*/
+  display: inline-block;
+  border: none;
+  overflow: auto;
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  text-indent: 1px;
+  text-overflow: '';
+
+  background-color: #222;
+  margin-left:0px;
+  margin-right:0px;
+  color: gainsboro;
+  padding: 5px;
+  font-weight: bold;
+}
+select option {
+  background-color: #111;
+  color: white;
+}
+option:hover {
+  background-color: #444;
+}
+/* END MENU */
 
 /* Footer */
 #footer {
@@ -86,10 +125,10 @@ textarea {
 }
 
 /* List Elements */
-.item {
-  outline: none;
-}
 #list-items {
+  margin-top: 55px;
+  margin-left: 55px;
+  margin-right: -5px;
   user-select: none;
   overflow-y: auto;
 }
@@ -126,9 +165,6 @@ textarea {
   margin-right: 0px;
   width: 50px;
 }
-.item-stats .item-title {
-  /* NOT IMPLEMENTED */
-}
 .item-stats .item-tags {
   text-align: center;
   font-style: oblique;
@@ -144,7 +180,7 @@ textarea {
 .item>.item-dropdown {
   display: flex;
   height: 0px;
-  
+  position: relative; /*so the date can be absolute*/
   overflow: hidden;
   transition-property: height;
   transition-duration: 250ms;
@@ -153,58 +189,68 @@ textarea {
   height: 200px;
   border-top: 2px solid #1A1A1A;
 }
-.item-dropdown>* {
-  margin: 7px;
-}
-
 .item-notes {
   font-family: sans-serif;
   padding: 4px;
-  width: 50%;
-  height: 90%;
-  margin-top: auto;
-  margin-bottom: auto;
-  color:  white;
-  background-color: #444;
+  margin: 7px;
+  min-width: 300px;
+  width: 65%;
+  height: 70%;
+  color: white;
+  background-color: #333;
+  overflow: hidden;
 }
-.item-image {
-  height:90%;
-  align-items: center;
+.item-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  position: absolute;
+  bottom:7px;
+  left:7px;
+  height: 30px;
 }
-.item-date {
-  margin-top:auto;
-  margin-bottom: 3px;
-  margin-right:3px;
-  margin-left:auto;
-  user-select: text;
-  color: #555;
-  font-size: 15px;
-}
-
-select {
-  display: inline-block;
-  border: none;
-  overflow: auto;
-  outline: none;
-  -webkit-appearance: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-  resize: none;
-  text-indent: 1px;
-  text-overflow: '';
-
-  background-color: #222;
-  margin-left:0px;
-  margin-right:0px;
-  color: gainsboro;
+.item-buttons div {
+  margin-right:7px;
+  height: auto;
+  width: 70px;
+  background-color: #333;
   padding: 5px;
-  font-weight: bold;
-}
-select option {
-  background-color: #111;
+  text-align: center;
   color: white;
 }
-option:hover {
+.item-buttons div:hover {
   background-color: #444;
+}
+.item-date {
+  
+  position: absolute;
+  margin-top:auto;
+  bottom:3px;
+  right:3px;
+  user-select: text;
+  color: #CCC;
+  font-size: 15px;
+  text-shadow: 0 0 5px black, 0 0 6px black, 0 0 7px black;
+}
+.item-image {
+  align-self: right;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  margin-left: auto;
+  width: 30%;
+  /*border-left: 2px solid #1A1A1A;*/
+  overflow: hidden;
+}
+.item-image div {
+  /* alot of bs to get the edges to not blur*/
+  height: 103%;
+  /*background-image: url("testimage.jpe");*/
+  background: linear-gradient(to left, transparent, #222), url("testimage.jpe");
+  filter: blur(0px);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  margin: -3px;
+  
 }
