@@ -1,0 +1,36 @@
+/* Holden Ernest - 2/2/2024 */
+
+body {
+    background-color: #333;
+    color: gainsboro;
+    user-select: none;
+}
+body::-webkit-scrollbar {
+    display: none;
+  }
+
+#all-center {
+    
+    width: 50%;
+    text-align: center;
+    margin: auto;
+    margin-top: 15%;
+}
+#title {
+    padding-bottom: 30px;
+    font-size: 30px;
+    font-weight: bold;
+}
+input {
+    padding-left: 5px;
+    height: 25px;
+    width: 200px;
+    overflow: auto;
+    outline: none;
+  -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    background-color: #444;
+    color: #CCC;
+    border: 2px solid #222;
+}
