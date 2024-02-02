@@ -60,6 +60,7 @@ body {
 /* END SIDEBAR */
 /* START MENU */
 #menu {
+  z-index: 3;
   height: 50px;
   background-color: #333;
   border-bottom: 2px solid #222;
@@ -184,6 +185,7 @@ option:hover {
   overflow: hidden;
   transition-property: height;
   transition-duration: 250ms;
+  z-index: 1;
 }
 .item:focus-within .item-dropdown {
   height: 200px;
@@ -205,6 +207,7 @@ option:hover {
   flex-direction: row;
   flex-wrap: nowrap;
   position: absolute;
+  z-index: 1;
   bottom:7px;
   left:7px;
   height: 30px;
@@ -224,6 +227,7 @@ option:hover {
 .item-date {
   
   position: absolute;
+  z-index: 1;
   margin-top:auto;
   bottom:3px;
   right:3px;
@@ -243,6 +247,7 @@ option:hover {
   overflow: hidden;
 }
 .item-image div {
+  z-index: 1;
   /* alot of bs to get the edges to not blur*/
   height: 103%;
   /*background-image: url("testimage.jpe");*/

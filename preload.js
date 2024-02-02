@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
             // whitelist channels
-            let validChannels = ["attempt-login","load-list"];
+            let validChannels = ["attempt-login","load-list","get-urls"];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             } else {
@@ -30,7 +30,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         receive: (channel, func) => {
-            let validChannels = ['display-list'];
+            let validChannels = ['display-list','update-image'];
             if (validChannels.includes(channel)) {
                 // Deliberately strip event as it includes `sender` 
                 ipcRenderer.on(channel, (event, ...args) => func(...args));
