@@ -63,6 +63,7 @@ body {
   height: 50px;
   bottom: 5px;
   left: 5px;
+  cursor: pointer;
   display: inline-block;
   background-image: url("Images/settings.png");
   background-repeat: no-repeat;
@@ -170,6 +171,36 @@ option:hover {
   bottom: 7px;
   left: 65px;
   font-size: 15px;
+}
+#save-btn {
+  position: fixed;
+  z-index: 4;
+  bottom: 7px;
+  right: -80px;
+  text-align: center;
+  font-size: 15px;
+  width: 60px;
+  height: 35px;
+  line-height: 35px;
+  background-color: #171;
+  color: gainsboro;
+  user-select:none;
+  cursor: pointer;
+  box-shadow: 2px 2px 8px 0px black;
+  transition-property: right;
+  transition-duration: 250ms;
+
+}
+#save-btn:hover {
+  color: #AAA;
+  background-color: #151;
+  box-shadow: 1px 1px 4px 0px black;
+}
+#save-check:checked + #save-btn {
+  right: 7px;
+}
+#save-check {
+  display: none;
 }
 
 /* List Elements */

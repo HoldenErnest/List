@@ -13,7 +13,9 @@ const sortBtn = document.getElementById("sort-list");
 searchbar.addEventListener('input', updateSearch);
 document.getElementById("sort-list").onchange = sort_all;
 document.getElementById("sort-order").onchange = sort_all;
+document.getElementById("save-btn").onclick = saveList;
 
+var madeChange = false;
 function sort_all() {
     var sortOrder = document.getElementById("sort-order").value;
     var toSort = document.getElementById('list-items').children;
@@ -46,6 +48,7 @@ function makeEditable(item) {
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
+        input.onchange = madeEdit;
         input.onblur=function(){
             var val=this.value;
             this.parentNode.innerHTML=val;
@@ -58,7 +61,8 @@ function makeEditable(item) {
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
-        input.onblur=function(){
+        input.onchange = madeEdit;
+        input.onblur = function() {
             var val=this.value;
             this.parentNode.innerHTML=val;
         }
@@ -67,8 +71,24 @@ function makeEditable(item) {
         input.focus();
     }
 }
+function madeEdit() {
+    if (madeChange) return;
+    madeChange = true;
+    //bring up the save menu if !madeChange
+    showSaveButton();
+}
+function showSaveButton() {
+    var saveBtn = document.getElementById("save-check");
+    saveBtn.checked = true;
+
+}
+function saveList() {
+    madeChange = false;
+
+    // TODO: save the list (open a window saying you arent connected to a server and ask to save locally)
+}
 document.onkeydown = function(event) {
-    if (event.key == "Escape") {//27 is the code for escape
+    if (event.key == "Escape" || event.key == "Enter") {//27 is the code for escape
         escapePress();
         return;
     }
