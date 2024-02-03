@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="OxHW7RBCHBax6zKn-Pwx" name="Page-1">
-        <mxGraphModel dx="1025" dy="928" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="918" dy="757" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -140,20 +140,28 @@
                 <mxCell id="50" value="cool blurred image of some kind" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="650" y="390" width="270" height="150" as="geometry"/>
                 </mxCell>
-                <mxCell id="51" value="save" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="290" y="500" width="60" height="30" as="geometry"/>
-                </mxCell>
                 <mxCell id="52" value="import image" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="430" y="500" width="60" height="30" as="geometry"/>
+                    <mxGeometry x="360" y="500" width="60" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="53" value="&lt;font style=&quot;font-size: 39px;&quot;&gt;+&lt;/font&gt;" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="830" y="220" width="40" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="54" value="delete" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="360" y="500" width="60" height="30" as="geometry"/>
+                    <mxGeometry x="290" y="500" width="60" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="57" value="&lt;span style=&quot;font-size: 11px;&quot;&gt;1/20/2001&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=39;" parent="1" vertex="1">
                     <mxGeometry x="850" y="480" width="70" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="Save" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="860" y="730" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="60">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="960" y="760" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="60" value="When you edit anything, this save button slides in" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="730" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
