@@ -57,9 +57,55 @@ body {
 .sidebar-list:hover {
   /*TODO: some animation*/
 }
+.sidebar-menu {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  bottom: 5px;
+  left: 5px;
+  display: inline-block;
+  background-image: url("Images/settings.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  opacity: 0.5;
+}
+.dropup-content {
+  display: block;
+  position: absolute;
+  left: -5px;
+  bottom: 50px;
+  background-color: #f1f1f1;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  height: 0px;
+  width: 50px;
+  overflow: hidden;
+  transition-property: height, width;
+  transition-duration: 250ms, 250ms;
+  transition-timing-function: ease-out;
+}
+.dropup-content a {
+  width: 100%;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  overflow: hidden;
+  display: inline-block;
+}
+.dropup-content a:hover {background-color: #ddd;}
+.sidebar-menu:focus-within:hover .dropup-content {
+  width: 120px;
+  height: 150px;
+}
+.sidebar-menu:hover {
+  opacity: 1;
+}
+
 /* END SIDEBAR */
 /* START MENU */
 #menu {
+  z-index: 3;
   height: 50px;
   background-color: #333;
   border-bottom: 2px solid #222;
@@ -120,7 +166,9 @@ option:hover {
 /* Footer */
 #footer {
   position: fixed;
+  z-index: 4;
   bottom: 7px;
+  left: 65px;
   font-size: 15px;
 }
 
@@ -184,6 +232,7 @@ option:hover {
   overflow: hidden;
   transition-property: height;
   transition-duration: 250ms;
+  z-index: 1;
 }
 .item:focus-within .item-dropdown {
   height: 200px;
@@ -205,6 +254,7 @@ option:hover {
   flex-direction: row;
   flex-wrap: nowrap;
   position: absolute;
+  z-index: 1;
   bottom:7px;
   left:7px;
   height: 30px;
@@ -224,6 +274,7 @@ option:hover {
 .item-date {
   
   position: absolute;
+  z-index: 1;
   margin-top:auto;
   bottom:3px;
   right:3px;
@@ -243,10 +294,11 @@ option:hover {
   overflow: hidden;
 }
 .item-image div {
+  z-index: 1;
   /* alot of bs to get the edges to not blur*/
   height: 103%;
   /*background-image: url("testimage.jpe");*/
-  background: linear-gradient(to left, transparent, #222), url("testimage.jpe");
+  background: linear-gradient(to left, transparent, #222), url("Images/testimage.jpe");
   filter: blur(0px);
   background-repeat: no-repeat;
   background-size: cover;

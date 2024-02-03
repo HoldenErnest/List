@@ -10,6 +10,12 @@ const JSONdb = require('simple-json-db');
 const db = new JSONdb('./preferences.json');
 var mainWindow;
 
+require('dotenv').config();
+var imageSearch = require('image-search-google');;
+var imgSearch = new imageSearch(process.env.CSE_ID, process.env.IMG_API_KEY);
+const imgOptions = {page:1};
+
+
 const createWindow = (fileName) => { // function to make the window
     const win = new BrowserWindow({
         autoHideMenuBar: true,
@@ -56,6 +62,18 @@ ipcMain.on('load-list', (event, fileName) => {
 });
 ipcMain.on('load-last-list', (event) => {
     displayList(db.get("lastList") + ".csv");
+});
+ipcMain.on('get-urls', (event, searched) => {
+    try {
+        return imgSearch.search(searched, imgOptions).then(images => {
+            return images.map(url => {
+                var dUrl = (url.url);
+                mainWindow.webContents.send("update-image", dUrl);
+            })
+        })
+    } catch (e){
+        console.error("PROBLEM WITH LOADING THE IMAGE URLS: " + e);
+    }
 });
 function displayList(fileName) {
     fs.readFile(path.join(__dirname, fileName), 'utf8', function (err, data) {

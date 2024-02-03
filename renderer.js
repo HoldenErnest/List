@@ -158,6 +158,20 @@ function showAllItems() {
     }
 }
 
+function updateImage(anItem) {
+    var searchText = anItem.getElementsByClassName("item-title")[0].innerHTML
+    window.api.send("get-urls", searchText);
+}
+window.api.receive('update-image', (urls) => {
+    var url = urls.split("\n")[0];
+    console.log("attempting to set backgrround to " + url);
+    var theItemImage = document.activeElement.getElementsByClassName("item-image")[0].childNodes[0];
+    theItemImage.style.background = `linear-gradient(to left, transparent, #222), url("${url}")`;
+    theItemImage.style.backgroundRepeat = "no-repeat";
+    theItemImage.style.backgroundSize = "cover";
+    theItemImage.style.backgroundPosition = "center";
+});
+
 window.api.receive('display-list', (listData) => {
     // when Main wants a list displayed (this is essentially "IPCrenderer.on")
     console.log(listData);
@@ -182,6 +196,9 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
+    clone.getElementsByClassName("change-item-image")[0].addEventListener("click", function(evt) {
+        updateImage(clone);
+    });
     //clone.onclick = clickItem;
     makeEditable(clone);
     var parent = document.getElementById('list-items');
