@@ -249,12 +249,15 @@ option:hover {
   text-align: center;
   font-style: oblique;
 }
-.item-stats .item-rating {
+.item-stats .item-rt {
   margin-right: 0px;
   margin-left: auto;
   text-align: right;
   width: 100px;
   overflow: visible;
+}
+.item-rating {
+  min-width: 40px;
 }
 /* Bottom half of an item. notes, image, ect*/
 .item>.item-dropdown {

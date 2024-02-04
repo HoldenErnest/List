@@ -61,16 +61,49 @@ function makeEditable(item) {
         input.focus();
     }
     item.getElementsByClassName("item-tags")[0].ondblclick=function(){
-        var val=this.innerHTML;
-        var input=document.createElement("input");
-        input.value=val;
+        var val = this.innerHTML;
+        var input = document.createElement("input");
+        input.value = val;
         input.className = 'editable';
         input.onchange = madeEdit;
         input.onblur = function() {
-            var val=this.value;
-            this.parentNode.innerHTML=val;
+            var val = this.value;
+            console.log(val + "is the val");
+            this.parentNode.innerHTML = val;
         }
         this.innerHTML="";
+        this.appendChild(input);
+        input.focus();
+    }
+    item.getElementsByClassName("item-rating")[0].ondblclick = function(){
+        var val = this.innerHTML;
+        var input = document.createElement("input");
+        input.value = val;
+        input.style.width = "40px";
+        input.type = "number";
+        input.className = 'editable';
+        input.onchange = madeEdit;
+        input.onblur = function() {
+            var val = this.value;
+            val = val > 10 ? 10 : val;
+            this.parentNode.innerHTML = val | "0";
+        }
+        this.innerHTML = "";
+        this.appendChild(input);
+        input.focus();
+    }
+    item.getElementsByClassName("item-date")[0].ondblclick = function(){
+        var val = this.innerHTML;
+        var input = document.createElement("input");
+        input.value = val;
+        input.onchange = madeEdit;
+        input.className = 'editable';
+        input.onblur = function() {
+            var val = this.value;
+            val = val ? new Date(val).toDateString().replace(/^\S+\s/,'') : new Date().toDateString().replace(/^\S+\s/,'')
+            this.parentNode.innerHTML = val; // TODO: ternery current date
+        }
+        this.innerHTML = "";
         this.appendChild(input);
         input.focus();
     }
@@ -95,7 +128,7 @@ function saveList() {
         csvString += ",";
         csvString += allItems[i].getElementsByClassName("item-notes")[0].value; // TODO: make sure this is csv safe
         csvString += ",";
-        csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML.replace("/10","");
+        csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML | "-";
         csvString += ",";
         csvString += allItems[i].getElementsByClassName("item-tags")[0].innerHTML.replaceAll(", "," ");
         csvString += ",";
@@ -256,7 +289,7 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
-    clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
+    clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
