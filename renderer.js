@@ -251,10 +251,9 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
     clone.getElementsByClassName("change-item-image")[0].addEventListener("click", function(evt) {
-        requestImageUrl(clone);
+        //requestImageUrl(clone); // << the event when you click an item image
     });
     if (itemData.image) { // if it has a unique image url, make sure to update it
-        console.log("thing is: " + itemData.image);
         updateImage(clone.querySelectorAll(".item-image div")[0], itemData.image)
     }
     //clone.onclick = clickItem;

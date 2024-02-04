@@ -30,6 +30,7 @@ const createWindow = (fileName) => { // function to make the window
         }
     })
     win.loadFile(`${fileName}.html`)
+    //win.removeMenu()
     mainWindow = win;
 }
 

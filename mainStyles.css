@@ -164,7 +164,7 @@ option:hover {
 }
 /* END MENU */
 
-/* Footer */
+/* START FIXED ELEMENTS */
 #footer {
   position: fixed;
   z-index: 4;
@@ -172,6 +172,7 @@ option:hover {
   left: 65px;
   font-size: 15px;
 }
+/* save */
 #save-btn {
   position: fixed;
   z-index: 4;
@@ -202,8 +203,8 @@ option:hover {
 #save-check {
   display: none;
 }
-
-/* List Elements */
+/* END FIXED ELEMENTS */
+/* START LIST ITEMS */
 #list-items {
   margin-top: 55px;
   margin-left: 55px;
@@ -225,7 +226,6 @@ option:hover {
   display: flex;
   align-items: center;
 }
-
 /* Sub elements inside of each item (these may not be used depending on the list type) */
 .item-stats:hover {
   background-color: #444;
@@ -256,7 +256,7 @@ option:hover {
   width: 100px;
   overflow: visible;
 }
-/* Bottom half of an item, depth for an item*/
+/* Bottom half of an item. notes, image, ect*/
 .item>.item-dropdown {
   display: flex;
   height: 0px;
@@ -280,28 +280,6 @@ option:hover {
   color: white;
   background-color: #333;
   overflow: hidden;
-}
-.item-buttons {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  position: absolute;
-  z-index: 1;
-  bottom:7px;
-  left:7px;
-  height: 30px;
-}
-.item-buttons div {
-  margin-right:7px;
-  height: auto;
-  width: 70px;
-  background-color: #333;
-  padding: 5px;
-  text-align: center;
-  color: white;
-}
-.item-buttons div:hover {
-  background-color: #444;
 }
 .item-date {
   
@@ -337,4 +315,53 @@ option:hover {
   background-position: center;
   margin: -3px;
   
+}
+.item-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  position: absolute;
+  z-index: 1;
+  bottom:7px;
+  left:7px;
+  height: 30px;
+}
+.item-buttons .delete-item {
+  margin-right:7px;
+  height: auto;
+  width: 60px;
+  background-color: #333;
+  padding: 5px;
+  text-align: center;
+  color: white;
+}
+.item-buttons .delete-item:hover {
+  background-color: #444;
+}
+.change-item-image {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  width: 70px;
+  transition-property: width;
+  transition-duration: 250ms;
+}
+.change-item-image .first {
+  min-width: 70px;
+}
+.change-item-image:focus{
+  width: 190px;
+}
+.change-item-image div {
+  color: white;
+  background-color: #333;
+  padding-top: 5px;
+  padding: auto;
+  text-align: center;
+  height: 100%;
+  min-width: 30px;
+}
+.change-item-image  div:hover {
+  background-color: #444;
 }
