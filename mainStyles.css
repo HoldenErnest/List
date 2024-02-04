@@ -352,7 +352,8 @@ option:hover {
   border-right: 2px solid #555;
 }
 .change-item-image:focus{
-  width: 190px;
+  /*max-width: 500px;*/
+  width: 220px;
 }
 .change-item-image div {
   color: white;
