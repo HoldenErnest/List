@@ -124,9 +124,11 @@ function saveList() {
     var allItems = document.querySelectorAll('#list-items .item');
     var csvString = "";
     for (let i = 0; i < allItems.length; i++) { // Optimization? what?
+
+        // TODO: make sure these are all csv safe
         csvString += allItems[i].getElementsByClassName("item-title")[0].innerHTML;
         csvString += ",";
-        csvString += allItems[i].getElementsByClassName("item-notes")[0].value; // TODO: make sure this is csv safe
+        csvString += allItems[i].getElementsByClassName("item-notes")[0].value;
         csvString += ",";
         csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML | "-";
         csvString += ",";
@@ -240,7 +242,11 @@ function showAllItems() {
         items[i].style.display = 'block';
     }
 }
-
+function removeItem(anItem) {
+    anItem.remove();
+    madeEdit();
+    sort_all();
+}
 function requestImageUrl(anItem, urlNum) {
     var searchText = anItem.getElementsByClassName("item-title")[0].innerHTML;
     lastImageEdit = anItem.querySelectorAll(".item-image div")[0];
@@ -278,7 +284,7 @@ function displayListItems(listData) {
     for(let i = 0; i < listData.length; i++) {
         displayListItem(listData[i], itemCount+i);
     }
-    // TODO: sort by whatever, then display, maybe in a displaySorted(sortby)
+    sort_all();
 }
 function displayListItem(itemData, itemID) {
     var original = document.getElementById('placeholder-item');
@@ -292,6 +298,9 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
+    clone.getElementsByClassName("delete-item")[0].addEventListener("click", function(evt) {
+        removeItem(clone); // remove this element if you delete
+    });
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
     var linkButtons = clone.getElementsByClassName("change-item-image")[0];
     for (let i = 1; i < linkButtons.children.length; i++) {
