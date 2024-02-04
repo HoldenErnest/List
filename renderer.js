@@ -15,7 +15,9 @@ document.getElementById("sort-list").onchange = sort_all;
 document.getElementById("sort-order").onchange = sort_all;
 document.getElementById("save-btn").onclick = saveList;
 
-var madeChange = false;
+var madeChange = false; // determine when the save button needs to appear
+var lastImageEdit; // determine what item to put the image in when its done async loading
+
 function sort_all() {
     var sortOrder = document.getElementById("sort-order").value;
     var toSort = document.getElementById('list-items').children;
@@ -84,7 +86,28 @@ function showSaveButton() {
 }
 function saveList() {
     madeChange = false;
+    var allItems = document.querySelectorAll('#list-items .item');
+    var csvString = "";
+    for (let i = 0; i < allItems.length; i++) { // Optimization? what?
+        csvString += allItems[i].getElementsByClassName("item-title")[0].innerHTML;
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-notes")[0].innerHTML; // TODO: make sure this is csv safe
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML.replace("/10","");
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-tags")[0].innerHTML.replaceAll(", "," ");
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-date")[0].innerHTML;
+        csvString += ",";
+        var img = allItems[i].querySelectorAll(".item-image div")[0],
+        style = img.currentStyle || window.getComputedStyle(img, false),
+        imgUrl = style.backgroundImage.slice(65, -1).replace(/"/g, "");
+        if (!imgUrl.startsWith("file://")) // if you dont have any unique url, dont save it
+            csvString += imgUrl;
 
+        csvString += "\n";
+    }
+    console.log("csv: " + csvString);
     // TODO: save the list (open a window saying you arent connected to a server and ask to save locally)
 }
 document.onkeydown = function(event) {
@@ -178,18 +201,22 @@ function showAllItems() {
     }
 }
 
-function updateImage(anItem) {
-    var searchText = anItem.getElementsByClassName("item-title")[0].innerHTML
+function requestImageUrl(anItem) {
+    var searchText = anItem.getElementsByClassName("item-title")[0].innerHTML;
+    lastImageEdit = anItem.querySelectorAll(".item-image div")[0];
     window.api.send("get-urls", searchText);
 }
-window.api.receive('update-image', (urls) => {
-    var url = urls.split("\n")[0];
-    console.log("attempting to set backgrround to " + url);
-    var theItemImage = document.activeElement.getElementsByClassName("item-image")[0].childNodes[0];
+function updateImage(theItemImage, url) {
     theItemImage.style.background = `linear-gradient(to left, transparent, #222), url("${url}")`;
     theItemImage.style.backgroundRepeat = "no-repeat";
     theItemImage.style.backgroundSize = "cover";
     theItemImage.style.backgroundPosition = "center";
+}
+window.api.receive('update-image', (urls) => {
+    var url = urls[0];
+    console.log("attempting to set backgrround to " + url);
+    updateImage(lastImageEdit, url); // this may not be the item you want unfortunatly, I dont know how to pass the item through when you request a url
+    madeEdit();
 });
 
 window.api.receive('display-list', (listData) => {
@@ -217,8 +244,11 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
     clone.getElementsByClassName("change-item-image")[0].addEventListener("click", function(evt) {
-        updateImage(clone);
+        requestImageUrl(clone);
     });
+    if (itemData.image) { // if it has a unique image url, make sure to update it
+        updateImage(clone.querySelectorAll("item-image div")[0], itemData.image)
+    }
     //clone.onclick = clickItem;
     makeEditable(clone);
     var parent = document.getElementById('list-items');
