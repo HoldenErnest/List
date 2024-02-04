@@ -15,6 +15,7 @@ var imageSearch = require('image-search-google');;
 var imgSearch = new imageSearch(process.env.CSE_ID, process.env.IMG_API_KEY);
 const imgOptions = {page:1};
 
+var currentListName; // keep track of the list youre currently displaying to renderer
 
 const createWindow = (fileName) => { // function to make the window
     const win = new BrowserWindow({
@@ -63,19 +64,46 @@ ipcMain.on('load-list', (event, fileName) => {
 ipcMain.on('load-last-list', (event) => {
     displayList(db.get("lastList") + ".csv");
 });
+ipcMain.on('save-list', (event, csvString) => {
+    console.log("saving list hopefully");
+    saveList(csvString);
+});
 ipcMain.on('get-urls', (event, searched) => {
     try {
-        return imgSearch.search(searched, imgOptions).then(images => {
-            return images.map(url => {
-                var dUrl = (url.url);
-                mainWindow.webContents.send("update-image", dUrl);
-            })
-        })
+        imgSearch.search(searched, imgOptions).then( images => {
+            var urls = images.map(img => {
+                return (img.url);
+                
+            });
+            mainWindow.webContents.send("update-image", urls);
+        });
+        
     } catch (e){
         console.error("PROBLEM WITH LOADING THE IMAGE URLS: " + e);
     }
 });
+function saveList(csvString) {
+    var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
+    var fileName = currentListName;
+    if (!serverHasFile) {
+        fileName = path.join("clientLists", fileName);
+    }
+    csvString = "title,notes,rating,tags,date,image,\n" + csvString;
+    fs.writeFile(path.join(__dirname, fileName), csvString, err => {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log("Saved file: '" + fileName + "'!")
+        }
+      });
+}
 function displayList(fileName) {
+    currentListName = fileName;
+    var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
+    if (!serverHasFile) {
+        fileName = path.join("clientLists", fileName);
+    }
+    console.log("Displaying list: '" + fileName + "'");
     fs.readFile(path.join(__dirname, fileName), 'utf8', function (err, data) {
         if (err) return console.error(err);
         // data is the contents of the text file we just read

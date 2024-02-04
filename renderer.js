@@ -13,6 +13,10 @@ const sortBtn = document.getElementById("sort-list");
 searchbar.addEventListener('input', updateSearch);
 document.getElementById("sort-list").onchange = sort_all;
 document.getElementById("sort-order").onchange = sort_all;
+document.getElementById("save-btn").onclick = saveList;
+
+var madeChange = false; // determine when the save button needs to appear
+var lastImageEdit; // determine what item to put the image in when its done async loading
 
 function sort_all() {
     var sortOrder = document.getElementById("sort-order").value;
@@ -46,6 +50,7 @@ function makeEditable(item) {
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
+        input.onchange = madeEdit;
         input.onblur=function(){
             var val=this.value;
             this.parentNode.innerHTML=val;
@@ -58,7 +63,8 @@ function makeEditable(item) {
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
-        input.onblur=function(){
+        input.onchange = madeEdit;
+        input.onblur = function() {
             var val=this.value;
             this.parentNode.innerHTML=val;
         }
@@ -67,8 +73,44 @@ function makeEditable(item) {
         input.focus();
     }
 }
+function madeEdit() {
+    if (madeChange) return;
+    madeChange = true;
+    //bring up the save menu if !madeChange
+    showSaveButton();
+}
+function showSaveButton() {
+    var saveBtn = document.getElementById("save-check");
+    saveBtn.checked = true;
+
+}
+function saveList() {
+    madeChange = false;
+    var allItems = document.querySelectorAll('#list-items .item');
+    var csvString = "";
+    for (let i = 0; i < allItems.length; i++) { // Optimization? what?
+        csvString += allItems[i].getElementsByClassName("item-title")[0].innerHTML;
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-notes")[0].value; // TODO: make sure this is csv safe
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML.replace("/10","");
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-tags")[0].innerHTML.replaceAll(", "," ");
+        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-date")[0].innerHTML;
+        csvString += ",";
+        var img = allItems[i].querySelectorAll(".item-image div")[0],
+        style = img.currentStyle || window.getComputedStyle(img, false),
+        imgUrl = style.backgroundImage.slice(65, -1).replace(/"/g, "");
+        if (!imgUrl.startsWith("file://")) // if you dont have any unique url, dont save it
+            csvString += imgUrl;
+
+        csvString += "\n";
+    }
+    window.api.send("save-list", csvString);
+}
 document.onkeydown = function(event) {
-    if (event.key == "Escape") {//27 is the code for escape
+    if (event.key == "Escape" || event.key == "Enter") {//27 is the code for escape
         escapePress();
         return;
     }
@@ -82,9 +124,6 @@ document.onkeydown = function(event) {
 };
 function isTypableKey(key) {
     return (key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z') || key == '#' || (key >= '0' && key <= '9');
-}
-function onButtonSave() {
-    alert('asdasfasfa');
 }
 function escapePress() {
     escapeFocus.focus();
@@ -158,23 +197,26 @@ function showAllItems() {
     }
 }
 
-function updateImage(anItem) {
-    var searchText = anItem.getElementsByClassName("item-title")[0].innerHTML
+function requestImageUrl(anItem) {
+    var searchText = anItem.getElementsByClassName("item-title")[0].innerHTML;
+    lastImageEdit = anItem.querySelectorAll(".item-image div")[0];
     window.api.send("get-urls", searchText);
 }
-window.api.receive('update-image', (urls) => {
-    var url = urls.split("\n")[0];
-    console.log("attempting to set backgrround to " + url);
-    var theItemImage = document.activeElement.getElementsByClassName("item-image")[0].childNodes[0];
+function updateImage(theItemImage, url) {
     theItemImage.style.background = `linear-gradient(to left, transparent, #222), url("${url}")`;
     theItemImage.style.backgroundRepeat = "no-repeat";
     theItemImage.style.backgroundSize = "cover";
     theItemImage.style.backgroundPosition = "center";
+}
+window.api.receive('update-image', (urls) => {
+    var url = urls[0];
+    console.log("attempting to set backgrround to " + url);
+    updateImage(lastImageEdit, url); // this may not be the item you want unfortunatly, I dont know how to pass the item through when you request a url
+    madeEdit();
 });
 
 window.api.receive('display-list', (listData) => {
     // when Main wants a list displayed (this is essentially "IPCrenderer.on")
-    console.log(listData);
     displayListItems(listData);
 });
 function displayListItems(listData) {
@@ -195,10 +237,15 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
+    clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
     clone.getElementsByClassName("change-item-image")[0].addEventListener("click", function(evt) {
-        updateImage(clone);
+        requestImageUrl(clone);
     });
+    if (itemData.image) { // if it has a unique image url, make sure to update it
+        console.log("thing is: " + itemData.image);
+        updateImage(clone.querySelectorAll(".item-image div")[0], itemData.image)
+    }
     //clone.onclick = clickItem;
     makeEditable(clone);
     var parent = document.getElementById('list-items');
