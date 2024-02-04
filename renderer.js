@@ -4,7 +4,7 @@
 const saveBtn = document.getElementById("save");
 const loadListBtn = document.getElementById("load-list");
 const searchbar = document.getElementById("searchbar");
-const escapeFocus = document.getElementById("escape-focus");
+const escapeFocusElem = document.getElementById("escape-focus");
 const sortBtn = document.getElementById("sort-list");
 
 //Event listeners
@@ -50,6 +50,7 @@ function makeEditable(item) {
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
+        input.className = 'editable';
         input.onchange = madeEdit;
         input.onblur=function(){
             var val=this.value;
@@ -63,6 +64,7 @@ function makeEditable(item) {
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
+        input.className = 'editable';
         input.onchange = madeEdit;
         input.onblur = function() {
             var val=this.value;
@@ -109,12 +111,21 @@ function saveList() {
     }
     window.api.send("save-list", csvString);
 }
+function getParentItem(subElement) { // get the item if its a parent of the subElement
+    if (!subElement || subElement.className == 'item') return subElement;
+    return getParentItem(subElement.parentElement);
+}
 document.onkeydown = function(event) {
-    if (event.key == "Escape" || event.key == "Enter") {//27 is the code for escape
-        escapePress();
+    var source = event.target;
+    if (event.key == "Enter" || event.key == "Escape") {
+        if (source.className === 'editable' || source.className === 'item-notes') {
+            getParentItem(source).focus();
+        } else {
+            console.log("escape focus");
+            escapePress();
+        }
         return;
     }
-    var source = event.target;
     exclude = ['input', 'textarea'];
     if (exclude.indexOf(source.tagName.toLowerCase()) === -1) {
         if (isTypableKey(event.key)) { // start typing in the searchbar if its a letter
@@ -126,7 +137,7 @@ function isTypableKey(key) {
     return (key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z') || key == '#' || (key >= '0' && key <= '9');
 }
 function escapePress() {
-    escapeFocus.focus();
+    escapeFocusElem.focus();
 }
 function loadList() {
     window.api.send("load-list", 'templist.csv');

@@ -217,6 +217,7 @@ option:hover {
 #list-items .item { /* The whole item, including the description */
   background-color: #222;
   margin: 7px;
+  outline: none;
 }
 .item-stats { /* the top of any item (the main stats shown) */
   background-color: #222;
