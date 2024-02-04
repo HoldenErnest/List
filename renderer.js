@@ -91,7 +91,7 @@ function saveList() {
     for (let i = 0; i < allItems.length; i++) { // Optimization? what?
         csvString += allItems[i].getElementsByClassName("item-title")[0].innerHTML;
         csvString += ",";
-        csvString += allItems[i].getElementsByClassName("item-notes")[0].innerHTML; // TODO: make sure this is csv safe
+        csvString += allItems[i].getElementsByClassName("item-notes")[0].value; // TODO: make sure this is csv safe
         csvString += ",";
         csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML.replace("/10","");
         csvString += ",";
@@ -107,8 +107,7 @@ function saveList() {
 
         csvString += "\n";
     }
-    console.log("csv: " + csvString);
-    // TODO: save the list (open a window saying you arent connected to a server and ask to save locally)
+    window.api.send("save-list", csvString);
 }
 document.onkeydown = function(event) {
     if (event.key == "Escape" || event.key == "Enter") {//27 is the code for escape
@@ -125,9 +124,6 @@ document.onkeydown = function(event) {
 };
 function isTypableKey(key) {
     return (key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z') || key == '#' || (key >= '0' && key <= '9');
-}
-function onButtonSave() {
-    alert('asdasfasfa');
 }
 function escapePress() {
     escapeFocus.focus();
@@ -221,7 +217,6 @@ window.api.receive('update-image', (urls) => {
 
 window.api.receive('display-list', (listData) => {
     // when Main wants a list displayed (this is essentially "IPCrenderer.on")
-    console.log(listData);
     displayListItems(listData);
 });
 function displayListItems(listData) {
@@ -242,12 +237,14 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating + '/10';
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
+    clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
     clone.getElementsByClassName("change-item-image")[0].addEventListener("click", function(evt) {
         requestImageUrl(clone);
     });
     if (itemData.image) { // if it has a unique image url, make sure to update it
-        updateImage(clone.querySelectorAll("item-image div")[0], itemData.image)
+        console.log("thing is: " + itemData.image);
+        updateImage(clone.querySelectorAll(".item-image div")[0], itemData.image)
     }
     //clone.onclick = clickItem;
     makeEditable(clone);

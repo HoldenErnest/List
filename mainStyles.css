@@ -188,7 +188,7 @@ option:hover {
   cursor: pointer;
   box-shadow: 2px 2px 8px 0px black;
   transition-property: right;
-  transition-duration: 250ms;
+  transition-duration: 500ms;
 
 }
 #save-btn:hover {

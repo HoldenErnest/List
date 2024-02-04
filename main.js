@@ -65,6 +65,7 @@ ipcMain.on('load-last-list', (event) => {
     displayList(db.get("lastList") + ".csv");
 });
 ipcMain.on('save-list', (event, csvString) => {
+    console.log("saving list hopefully");
     saveList(csvString);
 });
 ipcMain.on('get-urls', (event, searched) => {
@@ -74,7 +75,6 @@ ipcMain.on('get-urls', (event, searched) => {
                 return (img.url);
                 
             });
-            console.log(urls);
             mainWindow.webContents.send("update-image", urls);
         });
         
@@ -88,11 +88,12 @@ function saveList(csvString) {
     if (!serverHasFile) {
         fileName = path.join("clientLists", fileName);
     }
+    csvString = "title,notes,rating,tags,date,image,\n" + csvString;
     fs.writeFile(path.join(__dirname, fileName), csvString, err => {
         if (err) {
           console.error(err);
         } else {
-          console.log("Saved file: '" + fileName + ".csv'!")
+          console.log("Saved file: '" + fileName + "'!")
         }
       });
 }
@@ -102,6 +103,7 @@ function displayList(fileName) {
     if (!serverHasFile) {
         fileName = path.join("clientLists", fileName);
     }
+    console.log("Displaying list: '" + fileName + "'");
     fs.readFile(path.join(__dirname, fileName), 'utf8', function (err, data) {
         if (err) return console.error(err);
         // data is the contents of the text file we just read
