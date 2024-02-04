@@ -17,7 +17,7 @@ document.getElementById("save-btn").onclick = saveList;
 
 var madeChange = false; // determine when the save button needs to appear
 var lastImageEdit; // determine what item to put the image in when its done async loading
-
+var lastImageNumber = 0;
 function sort_all() {
     var sortOrder = document.getElementById("sort-order").value;
     var toSort = document.getElementById('list-items').children;
@@ -208,9 +208,15 @@ function showAllItems() {
     }
 }
 
-function requestImageUrl(anItem) {
+function requestImageUrl(anItem, urlNum) {
     var searchText = anItem.getElementsByClassName("item-title")[0].innerHTML;
     lastImageEdit = anItem.querySelectorAll(".item-image div")[0];
+    lastImageNumber = urlNum;
+    if (anItem.querySelectorAll(".item-image div")[0].value) {
+        urlString = anItem.querySelectorAll(".item-image div")[0].value;
+        updateImage(lastImageEdit, urlString.split("\n")[lastImageNumber])
+        return;
+    }
     window.api.send("get-urls", searchText);
 }
 function updateImage(theItemImage, url) {
@@ -220,8 +226,12 @@ function updateImage(theItemImage, url) {
     theItemImage.style.backgroundPosition = "center";
 }
 window.api.receive('update-image', (urls) => {
-    var url = urls[0];
-    console.log("attempting to set backgrround to " + url);
+    console.log("urls: " + urls); 
+    var urlString = "";
+    urls.map((u) => {urlString += u + "\n"});
+    console.log(urlString + " is the return")
+    lastImageEdit.value = urlString;
+    url = urls[lastImageNumber];
     updateImage(lastImageEdit, url); // this may not be the item you want unfortunatly, I dont know how to pass the item through when you request a url
     madeEdit();
 });
@@ -250,9 +260,13 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
-    clone.getElementsByClassName("change-item-image")[0].addEventListener("click", function(evt) {
-        //requestImageUrl(clone); // << the event when you click an item image
-    });
+    var linkButtons = clone.getElementsByClassName("change-item-image")[0];
+    for (let i = 1; i < linkButtons.children.length; i++) {
+        linkButtons.children[i].addEventListener("click", function(evt) {
+            requestImageUrl(clone, i-1); // << the event when you click an item image
+        });
+    }
+
     if (itemData.image) { // if it has a unique image url, make sure to update it
         updateImage(clone.querySelectorAll(".item-image div")[0], itemData.image)
     }

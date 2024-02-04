@@ -70,6 +70,7 @@ ipcMain.on('save-list', (event, csvString) => {
     saveList(csvString);
 });
 ipcMain.on('get-urls', (event, searched) => {
+    console.log("searching for: " + searched);
     try {
         imgSearch.search(searched, imgOptions).then( images => {
             var urls = images.map(img => {

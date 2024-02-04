@@ -349,6 +349,7 @@ option:hover {
 }
 .change-item-image .first {
   min-width: 70px;
+  border-right: 2px solid #555;
 }
 .change-item-image:focus{
   width: 190px;
