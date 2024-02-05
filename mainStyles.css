@@ -5,6 +5,10 @@
 body::-webkit-scrollbar {
   display: none;
 }
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 #placeholder-item {
   display: none !important;
 }
@@ -242,6 +246,7 @@ option:hover {
 .item-stats .item-id {
   overflow: visible;
   margin-right: 0px;
+  height: 20px;
   width: 50px;
 }
 .item-stats .item-tags {
