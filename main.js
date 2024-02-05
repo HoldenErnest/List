@@ -19,6 +19,7 @@ var currentListName; // keep track of the list youre currently displaying to ren
 
 const createWindow = (fileName) => { // function to make the window
     const win = new BrowserWindow({
+        icon: '/images/icon.png',
         autoHideMenuBar: true,
         width: 800,
         height: 600,

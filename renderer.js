@@ -292,7 +292,7 @@ function displayListItem(itemData, itemID) {
     var clone = original.cloneNode(true); // "deep" clone
     clone.id = '';
     // set all of these clones child divs to use the listItem information
-    clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
+    clone.getElementsByClassName("item-id")[0].innerHTML = itemID | document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags;
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
