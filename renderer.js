@@ -96,7 +96,7 @@ function makeEditable(item) {
             var val = this.value;
             val = val > 10 ? 10 : val;
             val = val < 0  ? 0 : val;
-            this.parentNode.innerHTML = val | "0"; // no ideea why this works, but it truncates the 0s
+            this.parentNode.innerHTML = val | "0"; // no idea why this works, but it truncates the 0s
             if (this.id != val)
                 madeEdit(item);
         }
