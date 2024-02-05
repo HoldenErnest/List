@@ -46,20 +46,23 @@ function sort_all() {
         toSort[i].getElementsByClassName("item-id")[0].innerHTML = i+1;
     }
 }
+function toTitleCase(str) {
+    return str[0].toUpperCase() + str.slice(1);
+}
 function makeEditable(item) {
-    var dontAllowSave = item.value == "new";
 
     // TODO: make this better
     item.getElementsByClassName("item-title")[0].ondblclick=function(){
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
+        input.id = val;
         input.className = 'editable';
         input.onblur=function(){
             var val=this.value;
-            this.parentNode.innerHTML=val;
-            if (!dontAllowSave)
-                madeEdit();
+            this.parentNode.innerHTML=toTitleCase(val);
+            if (this.id != val)
+                madeEdit(item);
         }
         this.innerHTML="";
         this.appendChild(input);
@@ -69,13 +72,13 @@ function makeEditable(item) {
         var val = this.innerHTML;
         var input = document.createElement("input");
         input.value = val;
+        input.id = val;
         input.className = 'editable';
         input.onblur = function() {
             var val = this.value;
-            console.log(val + "is the val");
             this.parentNode.innerHTML = val;
-            if (!dontAllowSave)
-                madeEdit();
+            if (this.id != val)
+                madeEdit(item);
         }
         this.innerHTML="";
         this.appendChild(input);
@@ -85,6 +88,7 @@ function makeEditable(item) {
         var val = this.innerHTML;
         var input = document.createElement("input");
         input.value = val;
+        input.id = val;
         input.style.width = "40px";
         input.type = "number";
         input.className = 'editable';
@@ -92,8 +96,8 @@ function makeEditable(item) {
             var val = this.value;
             val = val > 10 ? 10 : val;
             this.parentNode.innerHTML = val | "0";
-            if (!dontAllowSave)
-                madeEdit();
+            if (this.id != val)
+                madeEdit(item);
         }
         this.innerHTML = "";
         this.appendChild(input);
@@ -103,21 +107,23 @@ function makeEditable(item) {
         var val = this.innerHTML;
         var input = document.createElement("input");
         input.value = val;
+        input.id = val;
         input.className = 'editable';
         input.onblur = function() {
             var val = this.value;
             val = val ? new Date(val).toDateString().replace(/^\S+\s/,'') : new Date().toDateString().replace(/^\S+\s/,'')
             this.parentNode.innerHTML = val; // TODO: ternery current date
-            if (!dontAllowSave)
-                madeEdit();
+            if (this.id != val)
+                madeEdit(item);
         }
         this.innerHTML = "";
         this.appendChild(input);
         input.focus();
     }
 }
-function madeEdit() {
+function madeEdit(anItem) {
     if (madeChange) return;
+    if (anItem.value == "new") return;
     madeChange = true;
     //bring up the save menu if !madeChange
     showSaveButton();
@@ -251,8 +257,8 @@ function showAllItems() {
     }
 }
 function removeItem(anItem) {
+    madeEdit(anItem);
     anItem.remove();
-    madeEdit();
     sort_all();
 }
 function requestImageUrl(anItem, urlNum) {
@@ -281,7 +287,7 @@ window.api.receive('update-image', (urls) => {
     lastImageEdit.value = urlString;
     url = urls[lastImageNumber];
     updateImage(lastImageEdit, url); // this may not be the item you want unfortunatly, I dont know how to pass the item through when you request a url
-    madeEdit();
+    madeEdit(getParentItem(lastImageEdit));
 });
 
 window.api.receive('display-list', (listData) => {
@@ -338,7 +344,7 @@ function editTitle(anItem) { // when you make a new item, edit the title immedia
         var val=this.value;
         theTitle.innerHTML=val;
         /*
-        madeEdit();
+        madeEdit(anItem);
         sort_all();
         escapePress();
         */
@@ -352,14 +358,15 @@ function addSubmitButton(anItem) { // when you make a new item, have the id slot
     theId.style.backgroundColor = "#171";
     theId.onclick = function(){
         escapePress();
-        sort_all();
-        madeEdit();
         anItem.value = null; // UNSET THE "new" TAG
         // remove all events from the id
         this.onclick = null;
         this.onmouseenter = null;
         this.onmouseleave = null;
         this.style.backgroundColor = "transparent";
+
+        sort_all();
+        madeEdit(anItem);
     }
     theId.onmouseenter = function() {
         theId.style.backgroundColor = "#151";
@@ -369,7 +376,7 @@ function addSubmitButton(anItem) { // when you make a new item, have the id slot
     }
 }
 function addItemEvents(anItem) {
-    anItem.getElementsByClassName("item-notes")[0].onchange = madeEdit;
+    anItem.getElementsByClassName("item-notes")[0].onchange = () => {madeEdit(anItem);}
     anItem.getElementsByClassName("delete-item")[0].addEventListener("click", function(evt) {
         removeItem(anItem); // remove this element if you delete
     });

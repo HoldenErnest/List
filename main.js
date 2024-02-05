@@ -127,10 +127,14 @@ function parseToArray(stringVal) {
       return object;
     });
     formedArr.forEach(item => {
+        item.title = toTitleCase(item.title);
         item.notes = item.notes.replaceAll("\\n","\n");
         item.tags = item.tags.replaceAll(" ",", ");
     });
     return formedArr;
+}
+function toTitleCase(str) {
+    return str[0].toUpperCase() + str.slice(1);
 }
 
 app.whenReady().then(() => { // Start the application
