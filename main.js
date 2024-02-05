@@ -125,7 +125,10 @@ function parseToArray(stringVal) {
       keys.forEach((key, index) => (object[key] = item.at(index)));
       return object;
     });
-    console.log(formedArr);
+    formedArr.forEach(item => {
+        item.notes = item.notes.replaceAll("\\n","\n");
+        item.tags = item.tags.replaceAll(" ",", ");
+    });
     return formedArr;
 }
 

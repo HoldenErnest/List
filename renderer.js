@@ -294,9 +294,9 @@ function displayListItem(itemData, itemID) {
     // set all of these clones child divs to use the listItem information
     clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
-    clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
+    clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags;
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
-    clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes.replaceAll("\\n","\n");
+    clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
     clone.getElementsByClassName("delete-item")[0].addEventListener("click", function(evt) {
         removeItem(clone); // remove this element if you delete
