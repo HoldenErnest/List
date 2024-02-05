@@ -124,25 +124,25 @@ function saveList() {
     var allItems = document.querySelectorAll('#list-items .item');
     var csvString = "";
     for (let i = 0; i < allItems.length; i++) { // Optimization? what?
-
+        csvString += "\"";
         // TODO: make sure these are all csv safe
-        csvString += allItems[i].getElementsByClassName("item-title")[0].innerHTML;
-        csvString += ",";
-        csvString += allItems[i].getElementsByClassName("item-notes")[0].value;
-        csvString += ",";
+        csvString += allItems[i].getElementsByClassName("item-title")[0].innerHTML.replaceAll("\"","'");
+        csvString += "\",\"";
+        csvString += allItems[i].getElementsByClassName("item-notes")[0].value.replaceAll("\"","'").replaceAll("\n","\\n");
+        csvString += "\",\"";
         csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML | "-";
-        csvString += ",";
+        csvString += "\",\"";
         csvString += allItems[i].getElementsByClassName("item-tags")[0].innerHTML.replaceAll(", "," ");
-        csvString += ",";
+        csvString += "\",\"";
         csvString += allItems[i].getElementsByClassName("item-date")[0].innerHTML;
-        csvString += ",";
+        csvString += "\",\"";
         var img = allItems[i].querySelectorAll(".item-image div")[0],
         style = img.currentStyle || window.getComputedStyle(img, false),
         imgUrl = style.backgroundImage.slice(65, -1).replace(/"/g, "");
         if (!imgUrl.startsWith("file://")) // if you dont have any unique url, dont save it
             csvString += imgUrl;
 
-        csvString += "\n";
+        csvString += "\"\n";
     }
     window.api.send("save-list", csvString);
 }
@@ -153,9 +153,9 @@ function getParentItem(subElement) { // get the item if its a parent of the subE
 document.onkeydown = function(event) {
     var source = event.target;
     if (event.key == "Enter" || event.key == "Escape") {
-        if (source.className === 'editable' || source.className === 'item-notes') {
+        if (source.className === 'editable') {
             getParentItem(source).focus();
-        } else {
+        } else if (source.className != 'item-notes'){
             console.log("escape focus");
             escapePress();
         }
@@ -296,7 +296,7 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags.replaceAll(" ",", ");
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
-    clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
+    clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes.replaceAll("\\n","\n");
     clone.getElementsByClassName("item-notes")[0].onchange = madeEdit;
     clone.getElementsByClassName("delete-item")[0].addEventListener("click", function(evt) {
         removeItem(clone); // remove this element if you delete

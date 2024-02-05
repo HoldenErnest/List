@@ -90,7 +90,7 @@ function saveList(csvString) {
     if (!serverHasFile) {
         fileName = path.join("clientLists", fileName);
     }
-    csvString = "title,notes,rating,tags,date,image,\n" + csvString;
+    csvString = "\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n" + csvString;
     fs.writeFile(path.join(__dirname, fileName), csvString, err => {
         if (err) {
           console.error(err);
@@ -119,12 +119,13 @@ function parseToArray(stringVal) {
     const [keys, ...rest] = stringVal
       .trim()
       .split("\n")
-      .map((item) => item.split(','));
+      .map((item) => item.slice(1, -1).split("\",\"")); // remove the first and last "\"", then split
     const formedArr = rest.map((item) => {
       const object = {};
       keys.forEach((key, index) => (object[key] = item.at(index)));
       return object;
     });
+    console.log(formedArr);
     return formedArr;
 }
 
