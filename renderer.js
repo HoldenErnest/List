@@ -95,7 +95,8 @@ function makeEditable(item) {
         input.onblur = function() {
             var val = this.value;
             val = val > 10 ? 10 : val;
-            this.parentNode.innerHTML = val | "0";
+            val = val < 0  ? 0 : val;
+            this.parentNode.innerHTML = val | "0"; // no ideea why this works, but it truncates the 0s
             if (this.id != val)
                 madeEdit(item);
         }
@@ -144,18 +145,20 @@ function saveList() {
         csvString += "\",\"";
         csvString += allItems[i].getElementsByClassName("item-notes")[0].value.replaceAll("\"","'").replaceAll("\n","\\n");
         csvString += "\",\"";
-        csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML | "-";
+        csvString += allItems[i].getElementsByClassName("item-rating")[0].innerHTML || "-";
         csvString += "\",\"";
         csvString += allItems[i].getElementsByClassName("item-tags")[0].innerHTML.replaceAll(", "," ");
         csvString += "\",\"";
         csvString += allItems[i].getElementsByClassName("item-date")[0].innerHTML;
         csvString += "\",\"";
-        var img = allItems[i].querySelectorAll(".item-image div")[0],
-        style = img.currentStyle || window.getComputedStyle(img, false),
-        imgUrl = style.backgroundImage.slice(65, -1).replace(/"/g, "");
-        if (!imgUrl.startsWith("file://")) // if you dont have any unique url, dont save it
-            csvString += imgUrl;
-
+        var img = allItems[i].querySelectorAll(".item-image div")[0];
+        var style = img.currentStyle || window.getComputedStyle(img, false);
+        if (style) {
+            var imgUrl = style.backgroundImage.slice(65, -1).replace(/"/g, "");
+            console.log(style);
+            if (!imgUrl.startsWith("file://")) // if you dont have any unique url, dont save it
+                csvString += imgUrl;
+        }
         csvString += "\"\n";
     }
     window.api.send("save-list", csvString);
@@ -229,7 +232,6 @@ function updateSearch() {
         let hasSearchedRating = (!searchRating || theItemRating == searchRating);
         let hasSearchedTags = () => {
             if (!searchTags) return true;
-            console.log(searchTags.length + " is the leng")
             for (let i = 0; i < searchTags.length; i++){ // if any of the searched tags arent in the item, hide it
                 searchTags[i] = searchTags[i].replace("#","");
                 if (!theItemTags.toLowerCase().includes(searchTags[i].toLowerCase())) return false;
@@ -280,10 +282,8 @@ function updateImage(theItemImage, url) {
     theItemImage.style.backgroundPosition = "center";
 }
 window.api.receive('update-image', (urls) => {
-    console.log("urls: " + urls); 
     var urlString = "";
     urls.map((u) => {urlString += u + "\n"});
-    console.log(urlString + " is the return")
     lastImageEdit.value = urlString;
     url = urls[lastImageNumber];
     updateImage(lastImageEdit, url); // this may not be the item you want unfortunatly, I dont know how to pass the item through when you request a url
@@ -307,7 +307,7 @@ function displayListItem(itemData, itemID) {
     var clone = original.cloneNode(true); // "deep" clone
     clone.id = '';
     // set all of these clones child divs to use the listItem information
-    clone.getElementsByClassName("item-id")[0].innerHTML = itemID | document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
+    clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags;
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
