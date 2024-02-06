@@ -9,8 +9,6 @@ const JSONdb = require('simple-json-db');
 const db = new JSONdb(path.join(app.getPath("userData"), 'userPrefs.json'));
 var mainWindow;
 
-process.env.IMG_API_KEY="AIzaSyDAJ6wqsz7saAQ3pPPjBsg2Xyuu46Fk77Q";
-process.env.CSE_ID="a20d5aa1f00904bc4";
 
 require('dotenv').config();
 var imageSearch = require('image-search-google');
