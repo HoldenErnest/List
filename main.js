@@ -2,16 +2,16 @@
 // This will load the page into a window
 
 const { app, BrowserWindow, ipcMain} = require('electron');
+if (require('electron-squirrel-startup')) app.quit();
 const path = require('node:path');
 
 const fs = require("fs");
-const csv = require('jquery-csv');
 const JSONdb = require('simple-json-db');
-const db = new JSONdb('./preferences.json');
+const db = new JSONdb(path.join(app.getPath("userData"), 'userPrefs.json'));
 var mainWindow;
 
 require('dotenv').config();
-var imageSearch = require('image-search-google');;
+var imageSearch = require('image-search-google');
 var imgSearch = new imageSearch(process.env.CSE_ID, process.env.IMG_API_KEY);
 const imgOptions = {page:1};
 
@@ -19,6 +19,7 @@ var currentListName; // keep track of the list youre currently displaying to ren
 
 const createWindow = (fileName) => { // function to make the window
     const win = new BrowserWindow({
+        icon: path.join(__dirname, 'images/icon.png'),
         autoHideMenuBar: true,
         width: 800,
         height: 600,
@@ -30,6 +31,7 @@ const createWindow = (fileName) => { // function to make the window
         }
     })
     win.loadFile(`${fileName}.html`)
+    win.removeMenu()
     mainWindow = win;
 }
 
@@ -54,6 +56,7 @@ const correctLoginCreds = (username, password) => {
 const isSignedIn = () => {
     let username = db.get('uuid');
     let password = db.get('password');
+    if (!username || !password) return false;
     return correctLoginCreds(username, password);
 }
 
@@ -62,13 +65,14 @@ ipcMain.on('load-list', (event, fileName) => {
     displayList(fileName);
 });
 ipcMain.on('load-last-list', (event) => {
-    displayList(db.get("lastList") + ".csv");
+    displayList(db.get("lastList"));
 });
 ipcMain.on('save-list', (event, csvString) => {
     console.log("saving list hopefully");
     saveList(csvString);
 });
 ipcMain.on('get-urls', (event, searched) => {
+    console.log("searching for: " + searched);
     try {
         imgSearch.search(searched, imgOptions).then( images => {
             var urls = images.map(img => {
@@ -85,26 +89,44 @@ ipcMain.on('get-urls', (event, searched) => {
 function saveList(csvString) {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
     var fileName = currentListName;
+
+    var fullPath = "";
     if (!serverHasFile) {
-        fileName = path.join("clientLists", fileName);
+        fullPath = path.join(app.getPath("userData"), "clientLists");
+        if (!fs.existsSync(fullPath)){
+            fs.mkdirSync(fullPath);
+        }
     }
-    csvString = "title,notes,rating,tags,date,image,\n" + csvString;
-    fs.writeFile(path.join(__dirname, fileName), csvString, err => {
+    fullPath = path.join(fullPath,fileName);
+    fullPath += ".csv";
+    
+    csvString = "\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n" + csvString;
+    fs.writeFile(fullPath, csvString, err => {
         if (err) {
           console.error(err);
         } else {
           console.log("Saved file: '" + fileName + "'!")
         }
-      });
+    });
 }
 function displayList(fileName) {
-    currentListName = fileName;
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
+    fileName = fileName || "newList";
+    currentListName = fileName;
+    db.set("lastList",fileName);
+
+    var fullPath = "";
     if (!serverHasFile) {
-        fileName = path.join("clientLists", fileName);
+        fullPath = path.join(app.getPath("userData"), "clientLists");
+        if (!fs.existsSync(fullPath)){
+            return;
+        }
     }
-    console.log("Displaying list: '" + fileName + "'");
-    fs.readFile(path.join(__dirname, fileName), 'utf8', function (err, data) {
+    fullPath = path.join(fullPath,fileName);
+    fullPath += ".csv";
+
+    console.log("Displaying list: '" + fileName + "'"); // TODO: FIX, if its not a real path, just errors
+    fs.readFile(fullPath, 'utf8', function (err, data) {
         if (err) return console.error(err);
         // data is the contents of the text file we just read
         var listArray = parseToArray(data);
@@ -117,13 +139,21 @@ function parseToArray(stringVal) {
     const [keys, ...rest] = stringVal
       .trim()
       .split("\n")
-      .map((item) => item.split(','));
+      .map((item) => item.slice(1, -1).split("\",\"")); // remove the first and last "\"", then split
     const formedArr = rest.map((item) => {
       const object = {};
       keys.forEach((key, index) => (object[key] = item.at(index)));
       return object;
     });
+    formedArr.forEach(item => {
+        item.title = toTitleCase(item.title);
+        item.notes = item.notes.replaceAll("\\n","\n");
+        item.tags = item.tags.replaceAll(" ",", ");
+    });
     return formedArr;
+}
+function toTitleCase(str) {
+    return str[0].toUpperCase() + str.slice(1);
 }
 
 app.whenReady().then(() => { // Start the application
