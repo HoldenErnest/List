@@ -19,7 +19,7 @@ var currentListName; // keep track of the list youre currently displaying to ren
 
 const createWindow = (fileName) => { // function to make the window
     const win = new BrowserWindow({
-        icon: '/images/icon.png',
+        icon: path.join(__dirname, 'images/icon.png'),
         autoHideMenuBar: true,
         width: 800,
         height: 600,
@@ -64,7 +64,7 @@ ipcMain.on('load-list', (event, fileName) => {
     displayList(fileName);
 });
 ipcMain.on('load-last-list', (event) => {
-    displayList(db.get("lastList") + ".csv");
+    displayList(db.get("lastList"));
 });
 ipcMain.on('save-list', (event, csvString) => {
     console.log("saving list hopefully");
@@ -88,11 +88,19 @@ ipcMain.on('get-urls', (event, searched) => {
 function saveList(csvString) {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
     var fileName = currentListName;
+
+    var fullPath = "";
     if (!serverHasFile) {
-        fileName = path.join("clientLists", fileName);
+        fullPath = path.join(app.getPath("userData"), "clientLists");
+        if (!fs.existsSync(fullPath)){
+            fs.mkdirSync(fullPath);
+        }
     }
+    fullPath = path.join(fullPath,fileName);
+    fullPath += ".csv";
+    
     csvString = "\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n" + csvString;
-    fs.writeFile(path.join(__dirname, fileName), csvString, err => {
+    fs.writeFile(fullPath, csvString, err => {
         if (err) {
           console.error(err);
         } else {
@@ -101,13 +109,23 @@ function saveList(csvString) {
       });
 }
 function displayList(fileName) {
-    currentListName = fileName;
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
+    fileName = fileName || "newList";
+    currentListName = fileName;
+    db.set("lastList",fileName);
+
+    var fullPath = "";
     if (!serverHasFile) {
-        fileName = path.join("clientLists", fileName);
+        fullPath = path.join(app.getPath("userData"), "clientLists");
+        if (!fs.existsSync(fullPath)){
+            return;
+        }
     }
-    console.log("Displaying list: '" + fileName + "'");
-    fs.readFile(path.join(__dirname, fileName), 'utf8', function (err, data) {
+    fullPath = path.join(fullPath,fileName);
+    fullPath += ".csv";
+
+    console.log("Displaying list: '" + fileName + "'"); // TODO: FIX, if its not a real path, just errors
+    fs.readFile(fullPath, 'utf8', function (err, data) {
         if (err) return console.error(err);
         // data is the contents of the text file we just read
         var listArray = parseToArray(data);

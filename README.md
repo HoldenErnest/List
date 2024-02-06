@@ -15,6 +15,10 @@ setup server, determine architecture for clients
 - make sure node is installed
 - Clone this repo
 - run with `npm start`
+
+# Make
+- make sure the environment variables are set => type `set ENV_VARIABLE_NAME="XXXXXXX"` into the terminal
+- make sure the installer path is setup `set squirrel_temp="C:\Program Files (x86)"` or some directory
 - package with `npm run make` (might have to do 2 lines before this)
 
 https://www.electronjs.org/docs/latest/tutorial/quick-start

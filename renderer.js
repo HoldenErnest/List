@@ -342,7 +342,7 @@ function editTitle(anItem) { // when you make a new item, edit the title immedia
     input.className = 'editable';
     input.onblur=function(){
         var val=this.value;
-        theTitle.innerHTML=val;
+        theTitle.innerHTML=toTitleCase(val);
         /*
         madeEdit(anItem);
         sort_all();
