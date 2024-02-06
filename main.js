@@ -5,13 +5,15 @@ const { app, BrowserWindow, ipcMain} = require('electron');
 const path = require('node:path');
 
 const fs = require("fs");
-const csv = require('jquery-csv');
 const JSONdb = require('simple-json-db');
-const db = new JSONdb('./preferences.json');
+const db = new JSONdb(path.join(app.getPath("userData"), 'userPrefs.json'));
 var mainWindow;
 
+process.env.IMG_API_KEY="AIzaSyDAJ6wqsz7saAQ3pPPjBsg2Xyuu46Fk77Q";
+process.env.CSE_ID="a20d5aa1f00904bc4";
+
 require('dotenv').config();
-var imageSearch = require('image-search-google');;
+var imageSearch = require('image-search-google');
 var imgSearch = new imageSearch(process.env.CSE_ID, process.env.IMG_API_KEY);
 const imgOptions = {page:1};
 
@@ -56,6 +58,7 @@ const correctLoginCreds = (username, password) => {
 const isSignedIn = () => {
     let username = db.get('uuid');
     let password = db.get('password');
+    if (!username || !password) return false;
     return correctLoginCreds(username, password);
 }
 
@@ -106,7 +109,7 @@ function saveList(csvString) {
         } else {
           console.log("Saved file: '" + fileName + "'!")
         }
-      });
+    });
 }
 function displayList(fileName) {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
