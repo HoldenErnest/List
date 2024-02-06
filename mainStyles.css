@@ -315,7 +315,7 @@ option:hover {
   /* alot of bs to get the edges to not blur*/
   height: 103%;
   /*background-image: url("testimage.jpe");*/
-  background: linear-gradient(to left, transparent, #222), url("Images/testimage.jpe");
+  background: linear-gradient(to left, transparent, #222), url("Images/back.jpg");
   filter: blur(0px);
   background-repeat: no-repeat;
   background-size: cover;

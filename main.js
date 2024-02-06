@@ -2,13 +2,13 @@
 // This will load the page into a window
 
 const { app, BrowserWindow, ipcMain} = require('electron');
+if (require('electron-squirrel-startup')) app.quit();
 const path = require('node:path');
 
 const fs = require("fs");
 const JSONdb = require('simple-json-db');
 const db = new JSONdb(path.join(app.getPath("userData"), 'userPrefs.json'));
 var mainWindow;
-
 
 require('dotenv').config();
 var imageSearch = require('image-search-google');
