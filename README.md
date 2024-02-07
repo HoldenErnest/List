@@ -1,10 +1,10 @@
 # List
 Keep track of shows, give them ratings and descriptions
 
-# TODO
+# BUGS / TODO
 - spellcheck="true" on textarea
-- fix two things being new at the same time
 - maybe "=" or "+" auto adds
+- fix so you cant have two new items at the same time
 - sorting by date needs to sort properly
 - fix so you cant double click the edit boxes
 
