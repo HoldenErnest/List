@@ -28,12 +28,11 @@ function sort_all() {
         let nameA = a.getElementsByClassName(`item-${sortBtn.value}`)[0].innerHTML.toLowerCase();
         let nameB = b.getElementsByClassName(`item-${sortBtn.value}`)[0].innerHTML.toLowerCase();
         if (sortBtn.value == "rating") {
-            console.log(0,nameA.slice(nameA.indexOf('/')));
-            nameA = parseInt(nameA.slice(0,nameA.indexOf('/')));
-            nameB = parseInt(nameB.slice(0,nameB.indexOf('/')));
+            nameA = parseInt(nameA);
+            nameB = parseInt(nameB);
         } else if (sortBtn.value == "date") {
-            nameA = Date.parse(nameA);
-            nameB = Date.parse(nameB);
+            nameA = Date.parse(nameA) || 0;
+            nameB = Date.parse(nameB) || 0;
         }
         if (nameA < nameB) return -sortOrder;
         if (nameA > nameB) return sortOrder;
@@ -95,7 +94,7 @@ function makeEditable(item) {
                 case "date":
                     input.onblur = function() {
                         var val = this.value;
-                        val = val ? new Date(val).toDateString().replace(/^\S+\s/,'') : new Date().toDateString().replace(/^\S+\s/,'')
+                        val = isValidDate(val) ? new Date(val).toDateString().replace(/^\S+\s/,'') : new Date().toDateString().replace(/^\S+\s/,'')
                         this.parentNode.innerHTML = val; // TODO: ternery current date
                         if (this.alt != val)
                             madeEdit(item);
@@ -141,7 +140,6 @@ function saveList() {
         var style = img.currentStyle || window.getComputedStyle(img, false);
         if (style) {
             var imgUrl = style.backgroundImage.slice(65, -1).replace(/"/g, "");
-            console.log(style);
             if (!imgUrl.startsWith("file://")) // if you dont have any unique url, dont save it
                 csvString += imgUrl;
         }
@@ -298,7 +296,7 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags;
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
-    clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
+    clone.getElementsByClassName("item-date")[0].innerHTML = isValidDate(itemData.date) ? (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'') : "invalid date";
     addItemEvents(clone);
     if (itemData.image) { // if it has a unique image url, make sure to update it
         updateImage(clone.querySelectorAll(".item-image div")[0], itemData.image)
@@ -306,6 +304,9 @@ function displayListItem(itemData, itemID) {
     var parent = document.getElementById('list-items');
     parent.appendChild(clone);
 }
+function isValidDate(dateString) {
+    return !isNaN(Date.parse(dateString));
+  }
 function newItem() {
     if (hasNew) {console.log("there is already an unsubmitted new Item");return}; // dont make a second new item
     hasNew = true;

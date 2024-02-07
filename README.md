@@ -4,9 +4,6 @@ Keep track of shows, give them ratings and descriptions
 # BUGS / TODO
 - spellcheck="true" on textarea
 - maybe "=" or "+" auto adds
-- fix so you cant have two new items at the same time
-- sorting by date needs to sort properly
-- fix so you cant double click the edit boxes
 
 # Setup
 - make sure node is installed
