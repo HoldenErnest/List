@@ -5,6 +5,8 @@ Keep track of shows, give them ratings and descriptions
 - spellcheck="true" on textarea
 - fix two things being new at the same time
 - maybe "=" or "+" auto adds
+- sorting by date needs to sort properly
+- fix so you cant double click the edit boxes
 
 # Setup
 - make sure node is installed
