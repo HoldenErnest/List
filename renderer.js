@@ -17,6 +17,7 @@ document.getElementById("save-btn").onclick = saveList;
 document.getElementById("add-item-btn").onclick = newItem;
 
 var madeChange = false; // determine when the save button needs to appear
+var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
 var lastImageNumber = 0;
 function sort_all() {
@@ -306,9 +307,12 @@ function displayListItem(itemData, itemID) {
     parent.appendChild(clone);
 }
 function newItem() {
+    if (hasNew) {console.log("there is already an unsubmitted new Item");return}; // dont make a second new item
+    hasNew = true;
     var original = document.getElementById('placeholder-item');
     if (original == null) return;
     var clone = original.cloneNode(true); // "deep" clone
+    
     clone.id = '';
     clone.value = "new"; // SET THIS TAG SO THINGS READING IT CAN ACT ON IT
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date()).toDateString().replace(/^\S+\s/,'')
@@ -352,6 +356,7 @@ function addSubmitButton(anItem) { // when you make a new item, have the id slot
 
         sort_all();
         madeEdit(anItem);
+        hasNew = false;
     }
     theId.onmouseenter = function() {
         theId.style.backgroundColor = "#151";
