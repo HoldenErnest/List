@@ -47,21 +47,24 @@ function sort_all() {
     }
 }
 function toTitleCase(str) {
+    if (!str) return "";
     return str[0].toUpperCase() + str.slice(1);
 }
 function makeEditable(item) {
 
+    //var elementsList = ["title","tags","rating","date"];
     // TODO: make this better
     item.getElementsByClassName("item-title")[0].ondblclick=function(){
+        if (this.childElementCount > 0) return;
         var val=this.innerHTML;
         var input=document.createElement("input");
         input.value=val;
-        input.id = val;
+        input.alt = val;
         input.className = 'editable';
         input.onblur=function(){
             var val=this.value;
             this.parentNode.innerHTML=toTitleCase(val);
-            if (this.id != val)
+            if (this.alt != val)
                 madeEdit(item);
         }
         this.innerHTML="";
@@ -72,12 +75,12 @@ function makeEditable(item) {
         var val = this.innerHTML;
         var input = document.createElement("input");
         input.value = val;
-        input.id = val;
+        input.alt = val;
         input.className = 'editable';
         input.onblur = function() {
             var val = this.value;
             this.parentNode.innerHTML = val;
-            if (this.id != val)
+            if (this.alt != val)
                 madeEdit(item);
         }
         this.innerHTML="";
@@ -88,7 +91,7 @@ function makeEditable(item) {
         var val = this.innerHTML;
         var input = document.createElement("input");
         input.value = val;
-        input.id = val;
+        input.alt = val;
         input.style.width = "40px";
         input.type = "number";
         input.className = 'editable';
@@ -97,7 +100,7 @@ function makeEditable(item) {
             val = val > 10 ? 10 : val;
             val = val < 0  ? 0 : val;
             this.parentNode.innerHTML = val | "0"; // no idea why this works, but it truncates the 0s
-            if (this.id != val)
+            if (this.alt != val)
                 madeEdit(item);
         }
         this.innerHTML = "";
@@ -108,13 +111,13 @@ function makeEditable(item) {
         var val = this.innerHTML;
         var input = document.createElement("input");
         input.value = val;
-        input.id = val;
+        input.alt = val;
         input.className = 'editable';
         input.onblur = function() {
             var val = this.value;
             val = val ? new Date(val).toDateString().replace(/^\S+\s/,'') : new Date().toDateString().replace(/^\S+\s/,'')
             this.parentNode.innerHTML = val; // TODO: ternery current date
-            if (this.id != val)
+            if (this.alt != val)
                 madeEdit(item);
         }
         this.innerHTML = "";
