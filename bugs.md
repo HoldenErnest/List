@@ -4,6 +4,7 @@
 - multiple lists
 - So just like discord have a folder of lists compiled together and when you click it it expands out just like discord and shows all the lists in the folder
 - better tags setup
+- Iside list settings Have an option for loading and setting backup range (up to 5?) as well as making current backup/ version
 
 
 ## Design
