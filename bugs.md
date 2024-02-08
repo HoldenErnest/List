@@ -5,8 +5,10 @@
 - multiple lists
 - So just like discord have a folder of lists compiled together and when you click it it expands out just like discord and shows all the lists in the folder
 - better tags setup
-- Maybe have option to select amount of server side backups (up to 5 per person?) as well as maybe including clint side backups as well in case of server failure?
+- Maybe have option to select amount of server side backups (up to 5 per person? default is 1) as well as maybe including clint side backups as well in case of server failure?
 - support for server
+- general setting for how frequent a backup happens (only once a day after close in case of corruption)
+- button for manual backup (in settings lmao get destroyed)
 
 
 ## Design
