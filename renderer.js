@@ -17,6 +17,7 @@ document.getElementById("save-btn").onclick = saveList;
 document.getElementById("add-item-btn").onclick = newItem;
 
 var madeChange = false; // determine when the save button needs to appear
+var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
 var lastImageNumber = 0;
 function sort_all() {
@@ -27,12 +28,11 @@ function sort_all() {
         let nameA = a.getElementsByClassName(`item-${sortBtn.value}`)[0].innerHTML.toLowerCase();
         let nameB = b.getElementsByClassName(`item-${sortBtn.value}`)[0].innerHTML.toLowerCase();
         if (sortBtn.value == "rating") {
-            console.log(0,nameA.slice(nameA.indexOf('/')));
-            nameA = parseInt(nameA.slice(0,nameA.indexOf('/')));
-            nameB = parseInt(nameB.slice(0,nameB.indexOf('/')));
+            nameA = parseInt(nameA);
+            nameB = parseInt(nameB);
         } else if (sortBtn.value == "date") {
-            nameA = Date.parse(nameA);
-            nameB = Date.parse(nameB);
+            nameA = Date.parse(nameA) || 0;
+            nameB = Date.parse(nameB) || 0;
         }
         if (nameA < nameB) return -sortOrder;
         if (nameA > nameB) return sortOrder;
@@ -47,80 +47,65 @@ function sort_all() {
     }
 }
 function toTitleCase(str) {
+    if (!str) return "";
     return str[0].toUpperCase() + str.slice(1);
 }
 function makeEditable(item) {
 
-    // TODO: make this better
-    item.getElementsByClassName("item-title")[0].ondblclick=function(){
-        var val=this.innerHTML;
-        var input=document.createElement("input");
-        input.value=val;
-        input.id = val;
-        input.className = 'editable';
-        input.onblur=function(){
-            var val=this.value;
-            this.parentNode.innerHTML=toTitleCase(val);
-            if (this.id != val)
-                madeEdit(item);
+    var elementsList = ["title","tags","rating","date"];
+
+    elementsList.forEach(element => {
+        item.getElementsByClassName(`item-${element}`)[0].ondblclick=function(){
+            if (this.childElementCount > 0) return;
+            var val=this.innerHTML;
+            var input=document.createElement("input");
+            input.value=val;
+            input.alt = val;
+            input.className = 'editable';
+            switch (element) {
+                case "title":
+                    input.onblur=function(){
+                        var val=this.value;
+                        this.parentNode.innerHTML=toTitleCase(val);
+                        if (this.alt != val)
+                            madeEdit(item);
+                    }
+                    break;
+                case "tags":
+                    input.onblur = function() {
+                        var val = this.value;
+                        this.parentNode.innerHTML = val;
+                        if (this.alt != val)
+                            madeEdit(item);
+                    }
+                    break;
+                case "rating":
+                    input.style.width = "40px";
+                    input.type = "number";
+                    input.onblur = function() {
+                        var val = this.value;
+                        val = val > 10 ? 10 : val;
+                        val = val < 0  ? 0 : val;
+                        this.parentNode.innerHTML = val | "0"; // no idea why this works, but it truncates the 0s
+                        if (this.alt != val)
+                            madeEdit(item);
+                    }
+                    break;
+                case "date":
+                    input.onblur = function() {
+                        var val = this.value;
+                        val = isValidDate(val) ? new Date(val).toDateString().replace(/^\S+\s/,'') : new Date().toDateString().replace(/^\S+\s/,'')
+                        this.parentNode.innerHTML = val; // TODO: ternery current date
+                        if (this.alt != val)
+                            madeEdit(item);
+                    }
+                    break;
+            }
+            this.innerHTML="";
+            this.appendChild(input);
+            input.focus();
         }
-        this.innerHTML="";
-        this.appendChild(input);
-        input.focus();
-    }
-    item.getElementsByClassName("item-tags")[0].ondblclick=function(){
-        var val = this.innerHTML;
-        var input = document.createElement("input");
-        input.value = val;
-        input.id = val;
-        input.className = 'editable';
-        input.onblur = function() {
-            var val = this.value;
-            this.parentNode.innerHTML = val;
-            if (this.id != val)
-                madeEdit(item);
-        }
-        this.innerHTML="";
-        this.appendChild(input);
-        input.focus();
-    }
-    item.getElementsByClassName("item-rating")[0].ondblclick = function(){
-        var val = this.innerHTML;
-        var input = document.createElement("input");
-        input.value = val;
-        input.id = val;
-        input.style.width = "40px";
-        input.type = "number";
-        input.className = 'editable';
-        input.onblur = function() {
-            var val = this.value;
-            val = val > 10 ? 10 : val;
-            val = val < 0  ? 0 : val;
-            this.parentNode.innerHTML = val | "0"; // no idea why this works, but it truncates the 0s
-            if (this.id != val)
-                madeEdit(item);
-        }
-        this.innerHTML = "";
-        this.appendChild(input);
-        input.focus();
-    }
-    item.getElementsByClassName("item-date")[0].ondblclick = function(){
-        var val = this.innerHTML;
-        var input = document.createElement("input");
-        input.value = val;
-        input.id = val;
-        input.className = 'editable';
-        input.onblur = function() {
-            var val = this.value;
-            val = val ? new Date(val).toDateString().replace(/^\S+\s/,'') : new Date().toDateString().replace(/^\S+\s/,'')
-            this.parentNode.innerHTML = val; // TODO: ternery current date
-            if (this.id != val)
-                madeEdit(item);
-        }
-        this.innerHTML = "";
-        this.appendChild(input);
-        input.focus();
-    }
+    });
 }
 function madeEdit(anItem) {
     if (madeChange) return;
@@ -155,7 +140,6 @@ function saveList() {
         var style = img.currentStyle || window.getComputedStyle(img, false);
         if (style) {
             var imgUrl = style.backgroundImage.slice(65, -1).replace(/"/g, "");
-            console.log(style);
             if (!imgUrl.startsWith("file://")) // if you dont have any unique url, dont save it
                 csvString += imgUrl;
         }
@@ -312,7 +296,7 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags;
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
-    clone.getElementsByClassName("item-date")[0].innerHTML = (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'');
+    clone.getElementsByClassName("item-date")[0].innerHTML = isValidDate(itemData.date) ? (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'') : "invalid date";
     addItemEvents(clone);
     if (itemData.image) { // if it has a unique image url, make sure to update it
         updateImage(clone.querySelectorAll(".item-image div")[0], itemData.image)
@@ -320,10 +304,16 @@ function displayListItem(itemData, itemID) {
     var parent = document.getElementById('list-items');
     parent.appendChild(clone);
 }
+function isValidDate(dateString) {
+    return !isNaN(Date.parse(dateString));
+  }
 function newItem() {
+    if (hasNew) {console.log("there is already an unsubmitted new Item");return}; // dont make a second new item
+    hasNew = true;
     var original = document.getElementById('placeholder-item');
     if (original == null) return;
     var clone = original.cloneNode(true); // "deep" clone
+    
     clone.id = '';
     clone.value = "new"; // SET THIS TAG SO THINGS READING IT CAN ACT ON IT
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date()).toDateString().replace(/^\S+\s/,'')
@@ -367,6 +357,7 @@ function addSubmitButton(anItem) { // when you make a new item, have the id slot
 
         sort_all();
         madeEdit(anItem);
+        hasNew = false;
     }
     theId.onmouseenter = function() {
         theId.style.backgroundColor = "#151";
