@@ -1,6 +1,7 @@
 ## Features
 - induvidual list settings
 - Add an add list button/ "display" button
+- add option to remove lists (include an are you sure by making user input their password)
 - multiple lists
 - So just like discord have a folder of lists compiled together and when you click it it expands out just like discord and shows all the lists in the folder
 - better tags setup
