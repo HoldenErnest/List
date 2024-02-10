@@ -21,3 +21,6 @@
 - fix the backspace bug when searching
 - if you remove list while still in the "add" feature you can not add another one to replace it
 
+## Potential Settings
+- things listed in other catagories(too lazy to look through rn)
+- UI scaler, how big do you want each list item
