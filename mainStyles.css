@@ -52,6 +52,7 @@ body {
   align-items: center;
 }
 .sidebar-list {
+  user-select: none;
   height: 50px;
   width: 50px;
   background-color: #111;
@@ -80,6 +81,15 @@ body {
 }
 .sidebar-menu:hover {
   opacity: 1;
+}
+#add-list {
+  line-height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 30px;
+  font-weight: bolder;
+  color: grey;
+  background-color: #1A1A1A;
 }
 
 /* END SIDEBAR */
