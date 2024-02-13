@@ -9,7 +9,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-#placeholder-item {
+.placeholder {
   display: none !important;
 }
 textarea {

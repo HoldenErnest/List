@@ -11,7 +11,7 @@
   <body>
     <div id="escape-focus" tabindex="-1"></div>
     <!-- This is a placeholder item and will not be displayed vv -->
-    <div class="item" id="placeholder-item" tabindex="-1">
+    <div class="item placeholder" id="placeholder-item" tabindex="-1">
       <div class="item-stats">
         <div class="item-id">✔</div>
         <div class="item-title"></div>
@@ -37,10 +37,12 @@
       </div>
     </div>
     <!-- This is a placeholder item and will not be displayed ^^ -->
+    <div class="sidebar-list placeholder" id="sidebar-list" value=""></div>
+    
 
     <!--Start of the actual page-->
     <div id="sidebar">
-      <div class="sidebar-list" value="aList"></div>
+      
       <div id="add-list" class="sidebar-list" title="Start a new List" tabindex="-1">+
         <div id="new-list-popup" title="">
           <div id="new-list-text">New List</div>

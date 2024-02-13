@@ -20,7 +20,9 @@ document.getElementById("new-list-button").onclick = newList;
 var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
-var lastImageNumber = 0;
+var lastImageNumber = 0; // what image was the last selected for some reason
+var allListsArray;
+
 function sort_all() {
     var sortOrder = document.getElementById("sort-order").value;
     var toSort = document.getElementById('list-items').children;
@@ -184,7 +186,6 @@ function loadList() {
     window.api.send("load-list", 'templist.csv');
     // have main load the list, which will eventually be brought back through "display-list"
     // this is essentially "IPCrenderer.send"
-    // TODO: have it clear the previous list first once you can choose different lists
 }
 function updateSearch() {
     var searched = searchbar.value;
@@ -300,6 +301,7 @@ function displayListItem(itemData, itemID) {
     if (original == null) return;
     var clone = original.cloneNode(true); // "deep" clone
     clone.id = '';
+    clone.classList.remove("placeholder");
     // set all of these clones child divs to use the listItem information
     clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
@@ -323,7 +325,7 @@ function newItem() {
     var original = document.getElementById('placeholder-item');
     if (original == null) return;
     var clone = original.cloneNode(true); // "deep" clone
-    
+    clone.classList.remove("placeholder");
     clone.id = '';
     clone.value = "new"; // SET THIS TAG SO THINGS READING IT CAN ACT ON IT
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date()).toDateString().replace(/^\S+\s/,'')
@@ -401,11 +403,46 @@ function newList() { // crete a new list based off #new-list-input
     console.log("creating list " + listText);
     // TODO: send to main to display this listText
     // then add this to the list of available list names(if its not already a list)
+    if (!listNameExists(listText)) {
+        allListsArray.push(listText);
+        createList(listText);
+    }
     escapePress();
 }
 function toUsableFilename(inputString) {
-    return inputString.replace(/[\s/\\?%*:|"<>]/g, '-');
+    return inputString.replace(/[/\\?%*:|"<>]/g, '-');
 }
-function retrieveAllListNames() { // get an array of the list names available to this user (so you can tell what list youre loading)
+function listNameExists(listName) {
+    for (var i = 0; i < allListsArray.length; i++) {
+        if (allListsArray[i] == listName) return true;
+    }
+    return false;
+}
+window.api.receive('recieve-list-names', (listsData) => {
+    console.log("recieved lists " + listsData);
+    allListsArray = listsData;
+    //update all available lists sidebar
+    updateAllAvailableLists();
+});
+function updateAllAvailableLists() {
+    var parentElement = document.getElementById("sidebar");
+    var currentLists = Array.from(parentElement.getElementsByClassName("sidebar-list"));
+    currentLists.forEach(list => { // remove all prev lists
+        if (list.id == "add-list") return;
+        list.remove();
+    });
+
+    allListsArray.forEach(list => {
+        createList(list)
+    });
     
+}
+function createList(listName) {
+    var parentElement = document.getElementById("sidebar");
+    var original = document.getElementById("sidebar-list");
+    var clone = original.cloneNode(true); // "deep" clone
+    clone.classList.remove("placeholder");
+    clone.id = "";
+    clone.value = listName; // TODO make this more visible
+    parentElement.insertBefore(clone, parentElement.firstChild);
 }
