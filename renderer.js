@@ -107,7 +107,7 @@ function makeEditable(item) {
         }
     });
 }
-function madeEdit(anItem) {
+function madeEdit(anItem) { // anytime an item is changed, call this method to see if it will update save
     if (madeChange) return;
     if (anItem.value == "new") return;
     madeChange = true;
@@ -152,6 +152,7 @@ function getParentItem(subElement) { // get the item if its a parent of the subE
     return getParentItem(subElement.parentElement);
 }
 document.onkeydown = function(event) {
+    console.log(event.key);
     var source = event.target;
     if (event.key == "Enter" || event.key == "Escape") {
         if (source.className === 'editable') {
@@ -166,10 +167,14 @@ document.onkeydown = function(event) {
     if (exclude.indexOf(source.tagName.toLowerCase()) === -1) {
         if (isTypableKey(event.key)) { // start typing in the searchbar if its a letter
             focusSearch();
+        } else if (event.key == "Backspace") { // if you want the backspace button to clear search
+            focusSearch();
+            updateSearch();
         }
     }
 };
 function isTypableKey(key) {
+    if (key.length > 1) return false;
     return (key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z') || key == '#' || (key >= '0' && key <= '9');
 }
 function escapePress() {
@@ -182,6 +187,7 @@ function loadList() {
     // TODO: have it clear the previous list first once you can choose different lists
 }
 function updateSearch() {
+    console.log("updating search");
     var searched = searchbar.value;
     if (searched == "") {
         showAllItems();
@@ -193,9 +199,13 @@ function updateSearch() {
     var searchRating = ratingEx.exec(searched);
     const tagsEx = /#\w+/g;
     var searchTags = searched.match(tagsEx); // to get an array of multiple, you need to use match
-    
+
     // remove the other searched terms from the title search
-    if (searchRating) searched = searched.replace(ratingEx, "");
+    if (searchRating) {
+        searched = searched.replace(ratingEx, "");
+        // remove the '/10'
+        searchRating = (searchRating[0]).substring(0, searchRating[0].length - 3);
+    }
     if (searchTags) searched = searched.replace(tagsEx, "");
     searched = searched.replaceAll(/\s+/g, ' '); // remove all extraneous spaces from the title / clean it up
     searched = searched.replaceAll("#", '')
@@ -244,6 +254,7 @@ function showAllItems() {
 }
 function removeItem(anItem) {
     madeEdit(anItem);
+    if (anItem.value == "new") hasNew = false;
     anItem.remove();
     sort_all();
 }
@@ -306,7 +317,7 @@ function displayListItem(itemData, itemID) {
 }
 function isValidDate(dateString) {
     return !isNaN(Date.parse(dateString));
-  }
+}
 function newItem() {
     if (hasNew) {console.log("there is already an unsubmitted new Item");return}; // dont make a second new item
     hasNew = true;
