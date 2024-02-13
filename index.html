@@ -41,14 +41,20 @@
     <!--Start of the actual page-->
     <div id="sidebar">
       <div class="sidebar-list" value="aList"></div>
-      <div id="add-list" class="sidebar-list" title="Start a new List">+</div>
+      <div id="add-list" class="sidebar-list" title="Start a new List" tabindex="-1">+
+        <div id="new-list-popup" title="">
+          <div id="new-list-text">New List</div>
+          <input id="new-list-input" placeholder="list name" maxlength="20"></input>
+          <div id="new-list-button">create</div>
+        </div>
+      </div>
       <!--<div class="sidebar-menu" tabindex="-1"> settings icon-->
       </div>
     </div>
 
     <!--Top menu-->
     <div id="menu">
-      <input id="searchbar" title="Filter searches further by using #tags or a rating ~/10" type="text" name="searchbar" placeholder="search bar" maxlength="50">
+      <input id="searchbar" title="Filter searches further by using #tags or a rating ~/10" type="text" name="searchbar" placeholder="search" maxlength="50">
       <div id="add-item-btn">+</div>
       <div id="menu-buttons">
         

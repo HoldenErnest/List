@@ -15,6 +15,7 @@ document.getElementById("sort-list").onchange = sort_all;
 document.getElementById("sort-order").onchange = sort_all;
 document.getElementById("save-btn").onclick = saveList;
 document.getElementById("add-item-btn").onclick = newItem;
+document.getElementById("new-list-button").onclick = newList;
 
 var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
@@ -152,7 +153,6 @@ function getParentItem(subElement) { // get the item if its a parent of the subE
     return getParentItem(subElement.parentElement);
 }
 document.onkeydown = function(event) {
-    console.log(event.key);
     var source = event.target;
     if (event.key == "Enter" || event.key == "Escape") {
         if (source.className === 'editable') {
@@ -187,7 +187,6 @@ function loadList() {
     // TODO: have it clear the previous list first once you can choose different lists
 }
 function updateSearch() {
-    console.log("updating search");
     var searched = searchbar.value;
     if (searched == "") {
         showAllItems();
@@ -396,7 +395,17 @@ function clickItem() {
     this.focus();
     console.log("You've cliked to : " + this);
 }*/
-
+function newList() { // crete a new list based off #new-list-input
+    var listText = document.getElementById("new-list-input").value;
+    listText = toUsableFilename(listText);
+    console.log("creating list " + listText);
+    // TODO: send to main to display this listText
+    // then add this to the list of available list names(if its not already a list)
+    escapePress();
+}
+function toUsableFilename(inputString) {
+    return inputString.replace(/[\s/\\?%*:|"<>]/g, '-');
+}
 function retrieveAllListNames() { // get an array of the list names available to this user (so you can tell what list youre loading)
     
 }

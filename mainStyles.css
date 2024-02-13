@@ -91,6 +91,47 @@ body {
   color: grey;
   background-color: #1A1A1A;
 }
+#add-list:focus-within #new-list-popup {
+  width: 250px;
+  height: 150px;
+  top: calc(50% - 75px); /* - half the width or height*/
+  left: calc(50% - 125px);
+}
+#new-list-popup {
+  background-color: #333;
+  overflow: hidden;
+  position: fixed;
+  width: 0px;
+  height: 0px;
+  top: 50%;
+  left: 50%;
+  transition-property: width, height, top, left;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+  box-shadow: 2px 2px 8px 0px black;
+}
+#new-list-text {
+  color: gainsboro;
+}
+#new-list-input {
+  background-color: #222;
+  color: gainsboro;
+  border: 2px solid #111;
+}
+#new-list-button {
+  margin: auto;
+  background-color: #222;
+  color: gainsboro;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 30px;
+  width: 100px;
+  height: 30px;
+}
+#new-list-button:hover {
+  background-color: #444;
+  box-shadow: 1px 1px 4px 0px black;
+}
 
 /* END SIDEBAR */
 /* START MENU */
