@@ -182,8 +182,8 @@ function isTypableKey(key) {
 function escapePress() {
     escapeFocusElem.focus();
 }
-function loadList() {
-    window.api.send("load-list", 'templist.csv');
+function loadList(listname) {
+    window.api.send("load-list", listname);
     // have main load the list, which will eventually be brought back through "display-list"
     // this is essentially "IPCrenderer.send"
 }
@@ -251,6 +251,12 @@ function showAllItems() {
     for(let i = 1; i < items.length; i++) {
         items[i].style.display = 'block';
     }
+}
+function removeAllItems() {
+    let allItems = document.querySelectorAll('#list-items .item');
+    Array.from(allItems).forEach((item) => {
+        item.remove();
+    });
 }
 function removeItem(anItem) {
     madeEdit(anItem);
@@ -437,12 +443,17 @@ function updateAllAvailableLists() {
     });
     
 }
-function createList(listName) {
+function createList(listName) { // A new list display on the sidebar
     var parentElement = document.getElementById("sidebar");
     var original = document.getElementById("sidebar-list");
     var clone = original.cloneNode(true); // "deep" clone
     clone.classList.remove("placeholder");
     clone.id = "";
+    clone.innerHTML = listName;
     clone.value = listName; // TODO make this more visible
     parentElement.insertBefore(clone, parentElement.firstChild);
+    clone.addEventListener("click", function(evt) {
+        removeAllItems();
+        loadList(this.value);
+    });
 }
