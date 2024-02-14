@@ -21,7 +21,9 @@ var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
 var lastImageNumber = 0; // what image was the last selected for some reason
-var allListsArray;
+var allListsArray; // list of names that are all your available lists
+
+var tagsDictionary = {}; // a dictonary of all tags the user has
 
 function sort_all() {
     var sortOrder = document.getElementById("sort-order").value;
@@ -312,6 +314,7 @@ function displayListItem(itemData, itemID) {
     clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags;
+    addTags(itemData.tags);
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-date")[0].innerHTML = isValidDate(itemData.date) ? (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'') : "invalid date";
@@ -324,6 +327,20 @@ function displayListItem(itemData, itemID) {
 }
 function isValidDate(dateString) {
     return !isNaN(Date.parse(dateString));
+}
+function addTags(tagsString) { // given a string of tags, parse them into the tags dictionary
+    console.log(tagsString + " ARE TAGHS");
+    (tagsString.split(", ")).forEach((tag) => {
+        if (tag)
+            tagsDictionary[tag] = tagsDictionary[tag]+1 || 1;
+    });
+    /* // Display the keys
+    console.log("\n\n::");
+    Object.keys(tagsDictionary).forEach( (key) => {
+        console.log(key + ":" + tagsDictionary[key] + "\n");
+    });*/
+    
+    
 }
 function newItem() {
     if (hasNew) {console.log("there is already an unsubmitted new Item");return}; // dont make a second new item
