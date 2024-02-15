@@ -162,7 +162,6 @@ document.onkeydown = function(event) {
         if (source.className === 'editable') {
             getParentItem(source).focus();
         } else if (source.className != 'item-notes'){
-            console.log("escape focus");
             escapePress();
         }
         return;
@@ -329,7 +328,6 @@ function isValidDate(dateString) {
     return !isNaN(Date.parse(dateString));
 }
 function addTags(tagsString) { // given a string of tags, parse them into the tags dictionary
-    console.log(tagsString + " ARE TAGHS");
     (tagsString.split(", ")).forEach((tag) => {
         if (tag)
             tagsDictionary[tag] = tagsDictionary[tag]+1 || 1;
