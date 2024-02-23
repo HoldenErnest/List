@@ -64,8 +64,11 @@ const isSignedIn = () => {
 ipcMain.on('load-list', (event, fileName) => {
     displayList(fileName);
 });
-ipcMain.on('load-last-list', (event) => {
+ipcMain.on('load-last-list', (event) => { // ran from preload
     displayList(db.get("lastList"));
+});
+ipcMain.on('update-avail-lists', (event) => { // ran from preload
+    updateAvailableLists();
 });
 ipcMain.on('save-list', (event, csvString) => {
     console.log("saving list hopefully");
@@ -133,6 +136,25 @@ function displayList(fileName) {
         // display them to the page
         mainWindow.webContents.send("display-list", listArray);
     });
+}
+function updateAvailableLists() {
+    var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
+
+    var fullPath = "";
+    if (!serverHasFile) {
+        fullPath = path.join(app.getPath("userData"), "clientLists");
+        if (!fs.existsSync(fullPath)){
+            return;
+        }
+    }
+    var files = fs.readdirSync(fullPath);
+    files = files.map((name) => {
+        if (name.length <= 4 || !name.endsWith('.csv')) return;
+        return name.substring(0,name.length - 4);
+    });
+    files.filter(n => n); // remove all null elements
+    //console.log(`Path: ${fullPath} contains: ${files}`);
+    mainWindow.webContents.send("recieve-list-names", files);
 }
 
 function parseToArray(stringVal) {

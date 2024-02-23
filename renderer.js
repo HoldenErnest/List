@@ -15,11 +15,16 @@ document.getElementById("sort-list").onchange = sort_all;
 document.getElementById("sort-order").onchange = sort_all;
 document.getElementById("save-btn").onclick = saveList;
 document.getElementById("add-item-btn").onclick = newItem;
+document.getElementById("new-list-button").onclick = newList;
 
 var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
-var lastImageNumber = 0;
+var lastImageNumber = 0; // what image was the last selected for some reason
+var allListsArray; // list of names that are all your available lists
+
+var tagsDictionary = {}; // a dictonary of all tags the user has
+
 function sort_all() {
     var sortOrder = document.getElementById("sort-order").value;
     var toSort = document.getElementById('list-items').children;
@@ -107,7 +112,7 @@ function makeEditable(item) {
         }
     });
 }
-function madeEdit(anItem) {
+function madeEdit(anItem) { // anytime an item is changed, call this method to see if it will update save
     if (madeChange) return;
     if (anItem.value == "new") return;
     madeChange = true;
@@ -157,7 +162,6 @@ document.onkeydown = function(event) {
         if (source.className === 'editable') {
             getParentItem(source).focus();
         } else if (source.className != 'item-notes'){
-            console.log("escape focus");
             escapePress();
         }
         return;
@@ -166,20 +170,23 @@ document.onkeydown = function(event) {
     if (exclude.indexOf(source.tagName.toLowerCase()) === -1) {
         if (isTypableKey(event.key)) { // start typing in the searchbar if its a letter
             focusSearch();
+        } else if (event.key == "Backspace") { // if you want the backspace button to clear search
+            focusSearch();
+            updateSearch();
         }
     }
 };
 function isTypableKey(key) {
+    if (key.length > 1) return false;
     return (key >= 'A' && key <= 'Z') || (key >= 'a' && key <= 'z') || key == '#' || (key >= '0' && key <= '9');
 }
 function escapePress() {
     escapeFocusElem.focus();
 }
-function loadList() {
-    window.api.send("load-list", 'templist.csv');
+function loadList(listname) {
+    window.api.send("load-list", listname);
     // have main load the list, which will eventually be brought back through "display-list"
     // this is essentially "IPCrenderer.send"
-    // TODO: have it clear the previous list first once you can choose different lists
 }
 function updateSearch() {
     var searched = searchbar.value;
@@ -193,9 +200,13 @@ function updateSearch() {
     var searchRating = ratingEx.exec(searched);
     const tagsEx = /#\w+/g;
     var searchTags = searched.match(tagsEx); // to get an array of multiple, you need to use match
-    
+
     // remove the other searched terms from the title search
-    if (searchRating) searched = searched.replace(ratingEx, "");
+    if (searchRating) {
+        searched = searched.replace(ratingEx, "");
+        // remove the '/10'
+        searchRating = (searchRating[0]).substring(0, searchRating[0].length - 3);
+    }
     if (searchTags) searched = searched.replace(tagsEx, "");
     searched = searched.replaceAll(/\s+/g, ' '); // remove all extraneous spaces from the title / clean it up
     searched = searched.replaceAll("#", '')
@@ -242,8 +253,15 @@ function showAllItems() {
         items[i].style.display = 'block';
     }
 }
+function removeAllItems() {
+    let allItems = document.querySelectorAll('#list-items .item');
+    Array.from(allItems).forEach((item) => {
+        item.remove();
+    });
+}
 function removeItem(anItem) {
     madeEdit(anItem);
+    if (anItem.value == "new") hasNew = false;
     anItem.remove();
     sort_all();
 }
@@ -290,10 +308,12 @@ function displayListItem(itemData, itemID) {
     if (original == null) return;
     var clone = original.cloneNode(true); // "deep" clone
     clone.id = '';
+    clone.classList.remove("placeholder");
     // set all of these clones child divs to use the listItem information
     clone.getElementsByClassName("item-id")[0].innerHTML = itemID || document.querySelectorAll('#list-items .item').length; // if an id is passed in use that (might be unnessecary if the selector is efficient)
     clone.getElementsByClassName("item-title")[0].innerHTML = itemData.title;
     clone.getElementsByClassName("item-tags")[0].innerHTML = itemData.tags;
+    addTags(itemData.tags);
     clone.getElementsByClassName("item-rating")[0].innerHTML = itemData.rating;
     clone.getElementsByClassName("item-notes")[0].innerHTML = itemData.notes;
     clone.getElementsByClassName("item-date")[0].innerHTML = isValidDate(itemData.date) ? (new Date(itemData.date)).toDateString().replace(/^\S+\s/,'') : "invalid date";
@@ -306,14 +326,27 @@ function displayListItem(itemData, itemID) {
 }
 function isValidDate(dateString) {
     return !isNaN(Date.parse(dateString));
-  }
+}
+function addTags(tagsString) { // given a string of tags, parse them into the tags dictionary
+    (tagsString.split(", ")).forEach((tag) => {
+        if (tag)
+            tagsDictionary[tag] = tagsDictionary[tag]+1 || 1;
+    });
+    /* // Display the keys
+    console.log("\n\n::");
+    Object.keys(tagsDictionary).forEach( (key) => {
+        console.log(key + ":" + tagsDictionary[key] + "\n");
+    });*/
+    
+    
+}
 function newItem() {
     if (hasNew) {console.log("there is already an unsubmitted new Item");return}; // dont make a second new item
     hasNew = true;
     var original = document.getElementById('placeholder-item');
     if (original == null) return;
     var clone = original.cloneNode(true); // "deep" clone
-    
+    clone.classList.remove("placeholder");
     clone.id = '';
     clone.value = "new"; // SET THIS TAG SO THINGS READING IT CAN ACT ON IT
     clone.getElementsByClassName("item-date")[0].innerHTML = (new Date()).toDateString().replace(/^\S+\s/,'')
@@ -385,7 +418,57 @@ function clickItem() {
     this.focus();
     console.log("You've cliked to : " + this);
 }*/
+function newList() { // crete a new list based off #new-list-input
+    var listText = document.getElementById("new-list-input").value;
+    listText = toUsableFilename(listText);
+    console.log("creating list " + listText);
+    // TODO: send to main to display this listText
+    // then add this to the list of available list names(if its not already a list)
+    if (!listNameExists(listText)) {
+        allListsArray.push(listText);
+        createList(listText);
+    }
+    escapePress();
+}
+function toUsableFilename(inputString) {
+    return inputString.replace(/[/\\?%*:|"<>]/g, '-');
+}
+function listNameExists(listName) {
+    for (var i = 0; i < allListsArray.length; i++) {
+        if (allListsArray[i] == listName) return true;
+    }
+    return false;
+}
+window.api.receive('recieve-list-names', (listsData) => {
+    console.log("recieved lists " + listsData);
+    allListsArray = listsData;
+    //update all available lists sidebar
+    updateAllAvailableLists();
+});
+function updateAllAvailableLists() {
+    var parentElement = document.getElementById("sidebar");
+    var currentLists = Array.from(parentElement.getElementsByClassName("sidebar-list"));
+    currentLists.forEach(list => { // remove all prev lists
+        if (list.id == "add-list") return;
+        list.remove();
+    });
 
-function retrieveAllListNames() { // get an array of the list names available to this user (so you can tell what list youre loading)
+    allListsArray.forEach(list => {
+        createList(list)
+    });
     
+}
+function createList(listName) { // A new list display on the sidebar
+    var parentElement = document.getElementById("sidebar");
+    var original = document.getElementById("sidebar-list");
+    var clone = original.cloneNode(true); // "deep" clone
+    clone.classList.remove("placeholder");
+    clone.id = "";
+    clone.innerHTML = listName;
+    clone.value = listName; // TODO make this more visible
+    parentElement.insertBefore(clone, parentElement.firstChild);
+    clone.addEventListener("click", function(evt) {
+        removeAllItems();
+        loadList(this.value);
+    });
 }

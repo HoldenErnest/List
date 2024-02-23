@@ -9,7 +9,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-#placeholder-item {
+.placeholder {
   display: none !important;
 }
 textarea {
@@ -51,7 +51,13 @@ body {
   top:0px;
   align-items: center;
 }
+#sidebar *{
+  line-height: 50px;
+  text-align: center;
+  vertical-align: middle;
+}
 .sidebar-list {
+  user-select: none;
   height: 50px;
   width: 50px;
   background-color: #111;
@@ -59,6 +65,9 @@ body {
   margin-top: 5px;
   transition-property: border-radius;
   transition-duration: 250ms;
+  overflow: hidden;
+  color: gainsboro;
+  font-size: small;
 }
 .sidebar-list:hover {
   /*TODO: some animation*/
@@ -80,6 +89,56 @@ body {
 }
 .sidebar-menu:hover {
   opacity: 1;
+}
+#add-list {
+  font-size: 30px;
+  font-weight: bolder;
+  color: grey;
+  background-color: #1A1A1A;
+}
+#add-list:focus-within #new-list-popup {
+  width: 250px;
+  height: 150px;
+  top: calc(50% - 75px); /* - half the width or height*/
+  left: calc(50% - 125px);
+}
+#new-list-popup {
+  line-height: normal;
+  background-color: #333;
+  overflow: hidden;
+  position: fixed;
+  width: 0px;
+  height: 0px;
+  top: 50%;
+  left: 50%;
+  transition-property: width, height, top, left;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+  box-shadow: 2px 2px 8px 0px black;
+}
+#new-list-text {
+  color: gainsboro;
+}
+#new-list-input {
+  line-height: normal;
+  margin: 8px;
+  background-color: #222;
+  color: gainsboro;
+  border: 2px solid #111;
+}
+#new-list-button {
+  margin: auto;
+  background-color: #222;
+  color: gainsboro;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 30px;
+  width: 100px;
+  height: 30px;
+}
+#new-list-button:hover {
+  background-color: #444;
+  box-shadow: 1px 1px 4px 0px black;
 }
 
 /* END SIDEBAR */

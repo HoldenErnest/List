@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     replaceText(`install-version`, "1.0.1"); // todo set to app.getVersion();
     ipcRenderer.send('load-last-list'); // auto load the list
+    ipcRenderer.send('update-avail-lists');
 });
 
 // IMPORTANT: all connections between main and renderers are done through this
@@ -28,7 +29,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         receive: (channel, func) => {
-            let validChannels = ['display-list','update-image'];
+            let validChannels = ['display-list','update-image','recieve-list-names'];
             if (validChannels.includes(channel)) {
                 // Deliberately strip event as it includes `sender` 
                 ipcRenderer.on(channel, (event, ...args) => func(...args));
