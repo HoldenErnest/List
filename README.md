@@ -1,6 +1,15 @@
+#Images
 
+## General Look of the application
+![General Image](Images/CL-main.png)
 
-Before it will work use new API KEY https://console.cloud.google.com/
+## New list item
+![Creating a new List Item](Images/CL-new.png)
+
+## Regex search results
+![Regex search results](Images/CL-search.png)
+
+**IMPORTANT**: Before it will work use new API KEY https://console.cloud.google.com/
 
 # List
 Keep track of shows, give them ratings and descriptions
