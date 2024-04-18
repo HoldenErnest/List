@@ -1,3 +1,7 @@
+
+
+Before it will work use new API KEY https://console.cloud.google.com/
+
 # List
 Keep track of shows, give them ratings and descriptions
 
