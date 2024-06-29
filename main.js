@@ -154,7 +154,8 @@ function updateAvailableLists() {
     });
     files.filter(n => n); // remove all null elements
     //console.log(`Path: ${fullPath} contains: ${files}`);
-    mainWindow.webContents.send("recieve-list-names", files);
+    currentListName = db.get("lastList");
+    mainWindow.webContents.send("recieve-list-names", {allNames:files,selectedList:currentListName});
 }
 
 function parseToArray(stringVal) {

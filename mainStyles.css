@@ -56,6 +56,10 @@ body {
   text-align: center;
   vertical-align: middle;
 }
+.sidebar-list.selected {
+  background-color: #203;
+  box-shadow: 2px 2px 8px 0px black;
+}
 .sidebar-list {
   user-select: none;
   height: 50px;
@@ -69,6 +73,7 @@ body {
   color: gainsboro;
   font-size: small;
 }
+
 .sidebar-list:hover {
   /*TODO: some animation*/
   border-radius: 10px;
