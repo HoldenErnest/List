@@ -1,6 +1,8 @@
 // Holden Ernest - 2/23/2024
 // this is a test for connecting to my server with http, to be implimented when the server is looking better
 
+// WARNING: THIS SHOULD NOT ACTUALLY BE USED UNTIL ITS SECURE (http server code shown on github? youre insane)
+
 http = require('node:http');
 console.log("attempting to connect")
 http.get({
