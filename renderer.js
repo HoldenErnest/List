@@ -440,25 +440,25 @@ function listNameExists(listName) {
     return false;
 }
 window.api.receive('recieve-list-names', (listsData) => {
-    console.log("recieved lists " + listsData);
-    allListsArray = listsData;
+    console.log("recieved lists " + listsData.allNames);
+    allListsArray = listsData.allNames;
     //update all available lists sidebar
-    updateAllAvailableLists();
+    updateAllAvailableLists(listsData.selectedList);
 });
-function updateAllAvailableLists() {
+function updateAllAvailableLists(selectedList) {
     var parentElement = document.getElementById("sidebar");
     var currentLists = Array.from(parentElement.getElementsByClassName("sidebar-list"));
     currentLists.forEach(list => { // remove all prev lists
         if (list.id == "add-list") return;
         list.remove();
     });
-
+    console.log(selectedList + " is selected");
     allListsArray.forEach(list => {
-        createList(list)
+        createList(list, selectedList == list);
     });
     
 }
-function createList(listName) { // A new list display on the sidebar
+function createList(listName, isSelected) { // A new list display on the sidebar
     var parentElement = document.getElementById("sidebar");
     var original = document.getElementById("sidebar-list");
     var clone = original.cloneNode(true); // "deep" clone
@@ -468,7 +468,18 @@ function createList(listName) { // A new list display on the sidebar
     clone.value = listName; // TODO make this more visible
     parentElement.insertBefore(clone, parentElement.firstChild);
     clone.addEventListener("click", function(evt) {
+        console.log(this);
         removeAllItems();
         loadList(this.value);
+        setSelected(this);
     });
+    if (isSelected) setSelected(clone);
+}
+
+function setSelected(list) {
+    var parentElement = document.getElementById("sidebar");
+    Array.from(parentElement.getElementsByClassName("sidebar-list")).forEach(list => {
+        list.classList.remove("selected");
+    });
+    list.classList.add("selected");
 }
