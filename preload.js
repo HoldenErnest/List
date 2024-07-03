@@ -10,7 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (element) element.innerText = text;
     }
 
-    replaceText(`install-version`, "1.2"); // TODO: set to app.getVersion();
+    replaceText(`install-version`, "1.2.1"); // TODO: set to app.getVersion();
     ipcRenderer.send('load-last-list'); // auto load the list
     ipcRenderer.send('update-avail-lists');
 });
@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
             // whitelist channels
-            let validChannels = ["attempt-login","load-list","get-urls","save-list"];
+            let validChannels = ["attempt-login","load-list","get-urls","save-list","rename-list"];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             } else {
