@@ -229,6 +229,29 @@ select option {
 option:hover {
   background-color: #444;
 }
+#sort-order { /*the dropdown*/
+  display: inline-block;
+  border: none;
+  overflow: auto;
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  text-indent: 1px;
+  text-overflow: '';
+
+  background-color: #222;
+  margin-left:0px;
+  margin-right:0px;
+  color: gainsboro;
+  padding: 5px;
+  font-weight: bold;
+}
+#sort-order:hover {
+  background-color: #444;
+}
 /* END MENU */
 
 /* START FIXED ELEMENTS */

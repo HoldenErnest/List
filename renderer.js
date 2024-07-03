@@ -16,6 +16,7 @@ document.getElementById("sort-order").onchange = sort_all;
 document.getElementById("save-btn").onclick = saveList;
 document.getElementById("add-item-btn").onclick = newItem;
 document.getElementById("new-list-button").onclick = newList;
+document.getElementById("sort-order").onclick = toggleAscendingSort;
 
 var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
@@ -25,8 +26,9 @@ var allListsArray; // list of names that are all your available lists
 
 var tagsDictionary = {}; // a dictonary of all tags the user has
 
+var sortOrder = 1;
+
 function sort_all() {
-    var sortOrder = document.getElementById("sort-order").value;
     var toSort = document.getElementById('list-items').children;
     toSort = Array.prototype.slice.call(toSort, 0);
     toSort.sort(function(a, b) {
@@ -482,4 +484,16 @@ function setSelected(list) {
         list.classList.remove("selected");
     });
     list.classList.add("selected");
+}
+function toggleAscendingSort() {
+    toggleElem = document.getElementById("sort-order")
+    sortOrder = -sortOrder;
+    console.log(sortOrder + ", " + toggleElem);
+    if (sortOrder == 1) {
+        toggleElem.innerHTML = "▲";
+    } else {
+        toggleElem.innerHTML = "▼";
+    }
+
+    sort_all();
 }
