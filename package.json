@@ -1,6 +1,6 @@
 {
   "name": "chimplist",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "An easy way to keep all your lists in one place",
   "main": "main.js",
   "scripts": {
