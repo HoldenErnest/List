@@ -28,6 +28,33 @@ var tagsDictionary = {}; // a dictonary of all tags the user has
 
 var sortOrder = 1;
 
+function setupListListeners() {
+    var allListElements = Array.from(document.getElementsByClassName('sidebar-list'));
+    allListElements.forEach((listE) => {
+        listE.ondblclick = function(){
+            console.log("double clicked");
+            if (this.childElementCount > 0) return;
+            var val=this.innerHTML;
+            var input=document.createElement("input");
+            input.value=val;
+            input.alt=val;
+            input.className = 'editable list-rename';
+
+            input.onblur=function(){
+                var listName = toUsableFilename(this.value);
+                if (this.alt != this.value) { // if its changed
+                    window.api.send("rename-list", listName);
+                }
+                this.parentNode.innerHTML = listName;
+                this.remove();
+            }
+            this.innerHTML="";
+            this.appendChild(input);
+            input.focus();
+        }
+    });
+}
+
 function sort_all() {
     var toSort = document.getElementById('list-items').children;
     toSort = Array.prototype.slice.call(toSort, 0);
@@ -458,7 +485,7 @@ function updateAllAvailableLists(selectedList) {
     allListsArray.forEach(list => {
         createList(list, selectedList == list);
     });
-    
+    setupListListeners();
 }
 function createList(listName, isSelected) { // A new list display on the sidebar
     var parentElement = document.getElementById("sidebar");
@@ -470,7 +497,8 @@ function createList(listName, isSelected) { // A new list display on the sidebar
     clone.value = listName; // TODO make this more visible
     parentElement.insertBefore(clone, parentElement.firstChild);
     clone.addEventListener("click", function(evt) {
-        console.log(this);
+        //if the list is already selected dont change anything
+        if (Array.from(this.classList).includes("selected")) return;
         removeAllItems();
         loadList(this.value);
         setSelected(this);
@@ -478,7 +506,7 @@ function createList(listName, isSelected) { // A new list display on the sidebar
     if (isSelected) setSelected(clone);
 }
 
-function setSelected(list) {
+function setSelected(list) { // sets the selected list (not list Item)
     var parentElement = document.getElementById("sidebar");
     Array.from(parentElement.getElementsByClassName("sidebar-list")).forEach(list => {
         list.classList.remove("selected");
@@ -486,7 +514,7 @@ function setSelected(list) {
     list.classList.add("selected");
 }
 function toggleAscendingSort() {
-    toggleElem = document.getElementById("sort-order")
+    toggleElem = this;
     sortOrder = -sortOrder;
     console.log(sortOrder + ", " + toggleElem);
     if (sortOrder == 1) {

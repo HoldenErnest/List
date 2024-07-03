@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
             // whitelist channels
-            let validChannels = ["attempt-login","load-list","get-urls","save-list"];
+            let validChannels = ["attempt-login","load-list","get-urls","save-list","rename-list"];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             } else {

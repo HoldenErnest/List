@@ -73,6 +73,10 @@ body {
   color: gainsboro;
   font-size: small;
 }
+.list-rename {
+  width: 100%;
+  background-color: red;
+}
 
 .sidebar-list:hover {
   /*TODO: some animation*/

@@ -89,6 +89,26 @@ ipcMain.on('get-urls', (event, searched) => {
         console.error("PROBLEM WITH LOADING THE IMAGE URLS: " + e);
     }
 });
+ipcMain.on('rename-list', (event, fileName) => {
+    var fullPath = path.join(app.getPath("userData"), "clientLists");
+    var oldPath = path.join(fullPath,currentListName) + ".csv";
+    var newPath = path.join(fullPath,fileName) + ".csv";
+    fs.rename(
+        oldPath,
+        newPath,
+        (error) => {
+            if (error) {
+                // Show the error 
+                console.log(error);
+            }
+            else {
+                console.log("\nFile Renamed\n" + oldPath + " >> " + newPath);
+                currentListName = fileName;
+                updateAvailableLists();
+            }
+        });
+    
+});
 function saveList(csvString) {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
     var fileName = currentListName;
@@ -154,7 +174,7 @@ function updateAvailableLists() {
     });
     files.filter(n => n); // remove all null elements
     //console.log(`Path: ${fullPath} contains: ${files}`);
-    currentListName = db.get("lastList");
+    currentListName = currentListName || db.get("lastList");
     mainWindow.webContents.send("recieve-list-names", {allNames:files,selectedList:currentListName});
 }
 
