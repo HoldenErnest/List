@@ -22,7 +22,6 @@ textarea {
     resize: none; /*remove the resize handle on the bottom right*/
 }
 input {
-  border: none;
   overflow: auto;
   outline: none;
   -webkit-box-shadow: none;
@@ -75,7 +74,10 @@ body {
 }
 .list-rename {
   width: 100%;
-  background-color: red;
+  background-color: #111;
+  padding: 0px;
+  border: none;
+  font-size: 8px;
 }
 
 .sidebar-list:hover {
