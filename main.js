@@ -21,8 +21,8 @@ const createWindow = (fileName) => { // function to make the window
     const win = new BrowserWindow({
         icon: path.join(__dirname, 'images/icon.png'),
         autoHideMenuBar: true,
-        width: 800,
-        height: 600,
+        width: 800, // 800
+        height: 600, // 600
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,

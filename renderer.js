@@ -28,7 +28,7 @@ var tagsDictionary = {}; // a dictonary of all tags the user has
 
 var sortOrder = 1;
 
-function setupListListeners() {
+function setupListListeners() { // when you double click a list
     var allListElements = Array.from(document.getElementsByClassName('sidebar-list'));
     allListElements.forEach((listE) => {
         listE.ondblclick = function(){
