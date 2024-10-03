@@ -5,6 +5,7 @@ const { app, BrowserWindow, ipcMain} = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
 const path = require('node:path');
 
+const https = require('node:https');
 const fs = require("fs");
 const JSONdb = require('simple-json-db');
 const db = new JSONdb(path.join(app.getPath("userData"), 'userPrefs.json'));
@@ -215,3 +216,24 @@ app.whenReady().then(() => { // Start the application
 app.on('window-all-closed', () => { // CLOSE THE APP
     if (process.platform !== 'darwin') app.quit();
 })
+
+// Communicate with server:
+var httpsOptions = {
+    hostname: '127.0.0.1',
+    path: "/README.md",
+    rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
+    port: 2001,
+    method: 'GET'
+  };
+
+https.get(httpsOptions, (res) => {
+  console.log('[HTTPS] statusCode:', res.statusCode);
+  console.log('[HTTPS] headers:', res.headers);
+
+  res.on('data', (d) => {
+    process.stdout.write(d);
+  });
+
+}).on('error', (e) => {
+  console.error("[HTTPS] " + e);
+});
