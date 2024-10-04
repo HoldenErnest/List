@@ -223,9 +223,15 @@ var httpsOptions = {
     path: "/README.md",
     rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
     port: 2001,
-    method: 'GET'
+    method: 'lupu',
+    headers: {
+        'User': 'some-username',
+        'Pass': '12345',
+        'List': 'list-uid',
+        'Other': 'other things'
+      }
   };
-
+console.log("Connecting to List Server..");
 https.get(httpsOptions, (res) => {
   console.log('[HTTPS] statusCode:', res.statusCode);
   console.log('[HTTPS] headers:', res.headers);
