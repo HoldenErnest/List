@@ -220,14 +220,15 @@ app.on('window-all-closed', () => { // CLOSE THE APP
 // Communicate with server:
 var httpsOptions = {
     hostname: '127.0.0.1',
-    path: "/README.md",
+    path: "/",
     rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
     port: 2001,
     method: 'lupu',
     headers: {
-        'User': 'some-username',
-        'Pass': '12345',
-        'List': 'list-uid',
+        'User': 'fred',
+        'Pass': 'secretPass',
+        'Mode': 'login', // 'login', 'perms', 'get', 'save'
+        'List': '',
         'Other': 'other things'
       }
   };
