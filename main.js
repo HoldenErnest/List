@@ -225,10 +225,10 @@ var httpsOptions = {
     port: 2001,
     method: 'lupu',
     headers: {
-        'User': 'fred',
-        'Pass': 'secretPass',
-        'Mode': 'login', // 'login', 'perms', 'get', 'save'
-        'List': '',
+        'User': 'bob',
+        'Pass': 'sss',
+        'Mode': 'get', // 'login', 'perms', 'get', 'save'
+        'List': 'jim/alist',
         'Other': 'other things'
       }
   };
@@ -238,7 +238,9 @@ https.get(httpsOptions, (res) => {
   console.log('[HTTPS] headers:', res.headers);
 
   res.on('data', (d) => {
+    console.log("DATA START:");
     process.stdout.write(d);
+    console.log("DATA END:");
   });
 
 }).on('error', (e) => {
