@@ -217,6 +217,7 @@ app.on('window-all-closed', () => { // CLOSE THE APP
     if (process.platform !== 'darwin') app.quit();
 })
 
+var bodyString = '\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n\"BACKUP LIST\",\"WRONG DB, CHOOSE ANOTHER LIST\",\"0\",\"\",\"Jan 01 2001\",\"\"';
 // Communicate with server:
 var httpsOptions = {
     hostname: '127.0.0.1',
@@ -225,24 +226,29 @@ var httpsOptions = {
     port: 2001,
     method: 'lupu',
     headers: {
+        'Content-Length': bodyString.length,
+        'Content-Type': 'text/html',
+        'Connection': 'close',
         'User': 'bob',
         'Pass': 'sss',
-        'Mode': 'get', // 'login', 'perms', 'get', 'save'
+        'Mode': 'save', // 'login', 'perms', 'get', 'save'
         'List': 'jim/alist',
-        'Other': 'other things'
       }
   };
 console.log("Connecting to List Server..");
-https.get(httpsOptions, (res) => {
+const req = https.request(httpsOptions, (res) => {
   console.log('[HTTPS] statusCode:', res.statusCode);
   console.log('[HTTPS] headers:', res.headers);
 
   res.on('data', (d) => {
     console.log("DATA START:");
     process.stdout.write(d);
-    console.log("DATA END:");
+    console.log("\nDATA END:");
   });
 
 }).on('error', (e) => {
   console.error("[HTTPS] " + e);
 });
+
+req.write(bodyString);
+req.end()
