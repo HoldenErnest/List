@@ -1,5 +1,6 @@
 // Holden Ernest - 1/11/2024
 // This will load the page into a window
+// it also handles all of the background node processes, including actual interactions to the server
 
 const { app, BrowserWindow, ipcMain} = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
@@ -13,6 +14,7 @@ var mainWindow;
 
 require('dotenv').config();
 var imageSearch = require('image-search-google');
+const { Console } = require('node:console');
 var imgSearch = new imageSearch(process.env.CSE_ID, process.env.IMG_API_KEY);
 const imgOptions = {page:1};
 
@@ -36,6 +38,23 @@ const createWindow = (fileName) => { // function to make the window
     mainWindow = win;
 }
 
+app.whenReady().then(async () => { // Start the application
+    if (await isSignedIn())
+        createWindow('index'); // if the user is signed in(locally), have them go to the home page, otherwise re-login
+    else createWindow('login');
+    app.on('activate', () => { // allow event listener after the window is created
+        if (BrowserWindow.getAllWindows().length === 0) {
+            if (isSignedIn())
+                createWindow('index');
+            else createWindow('login');
+        }
+    })
+})
+
+app.on('window-all-closed', () => { // CLOSE THE APP
+    if (process.platform !== 'darwin') app.quit();
+})
+
 
 
 ipcMain.on('attempt-login', (event, loginInfo) => { // open specified page
@@ -44,21 +63,22 @@ ipcMain.on('attempt-login', (event, loginInfo) => { // open specified page
         createWindow('index');
     }
 });
-const correctLoginCreds = (username, password) => {
+const correctLoginCreds = async (username, password) => {
     console.log(`attempting to log in: [user:${username}, pass:${password}]`);
     // TODO: MAKE SURE THE LOCAL USERNAME AND PASSWORD YIELD A REAL ACCOUNT FOUND ON THE SERVER
-    if (password == 'Th3Pass' && username == '12345') {
-        db.set('uuid', username);
+    var goodLogin = await tryLoginToServer(username, password);
+    if (goodLogin) {
+        db.set('uuid', username); // reset the uuid since this is the latest known real login
         db.set('password', password);
         return true;
     }
     return false;
 }
-const isSignedIn = () => {
+const isSignedIn = async () => {
     let username = db.get('uuid');
     let password = db.get('password');
     if (!username || !password) return false;
-    return correctLoginCreds(username, password);
+    return await correctLoginCreds(username, password);
 }
 
 // EVENT - load the list 
@@ -110,8 +130,11 @@ ipcMain.on('rename-list', (event, fileName) => {
         });
     
 });
+// END EVENTS
+
+
 function saveList(csvString) {
-    var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
+    var serverHasFile = false;
     var fileName = currentListName;
 
     var fullPath = "";
@@ -134,18 +157,28 @@ function saveList(csvString) {
     });
     trySaveListToServer(csvString);
 }
-function displayList(fileName) {
+async function displayList(fileName) {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
     fileName = fileName || "newList";
     currentListName = fileName;
     db.set("lastList",fileName);
 
+
+    // Attempt to get from server first
+    var serverData = await tryLoadList(fileName);
+    
+    if (serverData != "") {
+        var listArray = parseToArray(serverData);
+        mainWindow.webContents.send("display-list", listArray);
+        return;
+    }
+
+    // read from a local file instead
+    console.log("reading " + fileName + " locally");
     var fullPath = "";
-    if (!serverHasFile) {
-        fullPath = path.join(app.getPath("userData"), "clientLists");
-        if (!fs.existsSync(fullPath)){
-            return;
-        }
+    fullPath = path.join(app.getPath("userData"), "clientLists");
+    if (!fs.existsSync(fullPath)){
+        return;
     }
     fullPath = path.join(fullPath,fileName);
     fullPath += ".csv";
@@ -201,25 +234,7 @@ function toTitleCase(str) {
     return str[0].toUpperCase() + str.slice(1);
 }
 
-app.whenReady().then(() => { // Start the application
-    if (isSignedIn())
-        createWindow('index'); // if the user is signed in(locally), have them go to the home page, otherwise re-login
-    else createWindow('login');
-    app.on('activate', () => { // allow event listener after the window is created
-        if (BrowserWindow.getAllWindows().length === 0) {
-            if (isSignedIn())
-                createWindow('index');
-            else createWindow('login');
-        }
-    })
-})
-
-app.on('window-all-closed', () => { // CLOSE THE APP
-    if (process.platform !== 'darwin') app.quit();
-})
-
-
-
+// SERVER CONNECTION STUFF---------------------------------
 function getHttpsOptions(user, pass, mode, list, contentLen) {
     var httpsOptions = {
         hostname: '127.0.0.1',
@@ -239,29 +254,109 @@ function getHttpsOptions(user, pass, mode, list, contentLen) {
     };
     return httpsOptions;
 }
-function trySaveListToServer(listString) {
+function trySaveListToServer(listString) { // this doesnt need to be async, but maybe give a notification if it failed
     //get username and password
-    let username = 'bob';//db.get('uuid');
-    let password = 'sss';//db.get('password');
+    let username = db.get('uuid');
+    let password = db.get('password');
 
     // Communicate with server:
-    console.log("Connecting to List Server..");
+    console.log("Attempting to save to Server..");
     const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length), (res) => {
-    console.log('[HTTPS] statusCode:', res.statusCode);
-    console.log('[HTTPS] headers:', res.headers);
 
-    res.on('data', (d) => {
-        console.log("DATA START:");
-        process.stdout.write(d);
-        console.log("\nDATA END:");
-    });
+        // if res.statusCode == 200 {give notification} else {give bad notification}
+        var data = ''
+        res.on('data', (d) => { // large data might come in chunks
+            data += d;
+            console.log("response: " + d);
+        });
+
+        res.on('end', () => { // done chunking all data
+            //resolve(data); // whatever is passed to resolve goes to the Promises .then params
+        });
 
     }).on('error', (e) => {
-        console.error("[HTTPS] " + e);
+        console.error("[HTTPS SAVE] " + e);
     });
 
     req.write(listString);
     req.end();
+}
+
+async function tryLoginToServer(username, password) {
+    try {
+        const response = await getLoginResponse(username,password);
+        console.log(response + " is the response")
+        return response == 200;
+      } catch (error) {
+        console.error('Error:', error);
+        return false;
+      }
+}
+
+async function getLoginResponse(username, password) {
+    console.log("Attempting to login to Server..");
+    return new Promise((resolve, regect) => {
+    https.get(getHttpsOptions(username,password,'login','',0), (res) => {
+        console.log('[HTTPS] statusCode:', res.statusCode);
+        console.log('[HTTPS] headers:', res.headers);
+        var data = ''
+        res.on('data', (d) => { // large data might come in chunks
+            data += d;
+        });
+
+        res.on('end', () => { // done chunking all data
+            resolve(res.statusCode);
+        });
+    
+        }).on('error', (e) => {
+            console.error("[HTTPS LOGIN] " + e);
+            regect(e);
+        });
+    });
+}
+
+async function tryLoadList(listPath) {
+    try {
+        const response = await getListResponse(listPath);
+        if (response.statusCode == 200) {
+            return response.data;
+        } else {
+            console.log("problem loading list " + listPath);
+            return "";
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        return "";
+    }
+}
+
+async function getListResponse(listPath) {
+    console.log("Attempting to load list from Server..");
+    //get username and password
+    let username = db.get('uuid');
+    let password = db.get('password');
+
+    return new Promise((resolve, regect) => {
+    https.get(getHttpsOptions(username,password,'get',listPath,0), (res) => {
+        console.log('[HTTPS] statusCode:', res.statusCode);
+        console.log('[HTTPS] headers:', res.headers);
+        var data = ''
+        res.on('data', (d) => { // large data might come in chunks
+            data += d;
+        });
+
+        res.on('end', () => { // done chunking all data
+            resolve({
+                statusCode: res.statusCode,
+                data: data
+            }); // whatever is passed to resolve goes to the Promises .then params
+        });
+    
+        }).on('error', (e) => {
+            console.error("[HTTPS GET] " + e);
+            regect(e);
+        });
+    });
 }
 
 var bodyString = '\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n\"BACKU\\P LIST\",\"WRONG DB, CHOOSE ANOTHER LIST\",\"0\",\"\",\"Jan 01 2001\",\"\"';
