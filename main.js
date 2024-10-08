@@ -132,6 +132,7 @@ function saveList(csvString) {
           console.log("Saved file: '" + fileName + "'!")
         }
     });
+    trySaveListToServer(csvString);
 }
 function displayList(fileName) {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
@@ -217,38 +218,50 @@ app.on('window-all-closed', () => { // CLOSE THE APP
     if (process.platform !== 'darwin') app.quit();
 })
 
-var bodyString = '\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n\"BACKUP LIST\",\"WRONG DB, CHOOSE ANOTHER LIST\",\"0\",\"\",\"Jan 01 2001\",\"\"';
-// Communicate with server:
-var httpsOptions = {
-    hostname: '127.0.0.1',
-    path: "/",
-    rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
-    port: 2001,
-    method: 'lupu',
-    headers: {
-        'Content-Length': bodyString.length,
-        'Content-Type': 'text/html',
-        'Connection': 'close',
-        'User': 'bob',
-        'Pass': 'sss',
-        'Mode': 'save', // 'login', 'perms', 'get', 'save'
-        'List': 'jim/alist',
-      }
-  };
-console.log("Connecting to List Server..");
-const req = https.request(httpsOptions, (res) => {
-  console.log('[HTTPS] statusCode:', res.statusCode);
-  console.log('[HTTPS] headers:', res.headers);
 
-  res.on('data', (d) => {
-    console.log("DATA START:");
-    process.stdout.write(d);
-    console.log("\nDATA END:");
-  });
 
-}).on('error', (e) => {
-  console.error("[HTTPS] " + e);
-});
+function getHttpsOptions(user, pass, mode, list, contentLen) {
+    var httpsOptions = {
+        hostname: '127.0.0.1',
+        path: "/",
+        rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
+        port: 2001,
+        method: 'lupu',
+        headers: {
+            'Content-Length': contentLen,
+            'Content-Type': 'text/html',
+            'Connection': 'close',
+            'User': user, // unique username
+            'Pass': pass, // secretPassword
+            'Mode': mode, // 'login', 'perms', 'get', 'save'
+            'List': list, // otherUser/alist -- alist
+          }
+    };
+    return httpsOptions;
+}
+function trySaveListToServer(listString) {
+    //get username and password
+    let username = 'bob';//db.get('uuid');
+    let password = 'sss';//db.get('password');
 
-req.write(bodyString);
-req.end()
+    // Communicate with server:
+    console.log("Connecting to List Server..");
+    const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length), (res) => {
+    console.log('[HTTPS] statusCode:', res.statusCode);
+    console.log('[HTTPS] headers:', res.headers);
+
+    res.on('data', (d) => {
+        console.log("DATA START:");
+        process.stdout.write(d);
+        console.log("\nDATA END:");
+    });
+
+    }).on('error', (e) => {
+        console.error("[HTTPS] " + e);
+    });
+
+    req.write(listString);
+    req.end();
+}
+
+var bodyString = '\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n\"BACKU\\P LIST\",\"WRONG DB, CHOOSE ANOTHER LIST\",\"0\",\"\",\"Jan 01 2001\",\"\"';
