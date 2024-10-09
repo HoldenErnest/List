@@ -18,11 +18,6 @@ document.getElementById("add-item-btn").onclick = newItem;
 document.getElementById("new-list-button").onclick = newList;
 document.getElementById("sort-order").onclick = toggleAscendingSort;
 
-document.addEventListener('DOMContentLoaded', (event) => {
-    window.api.send('load-last-list');
-    window.api.send('update-avail-lists');
-});
-
 var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
