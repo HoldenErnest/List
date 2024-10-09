@@ -20,6 +20,23 @@ const imgOptions = {page:1};
 
 var currentListName; // keep track of the list youre currently displaying to renderer
 
+/*
+    FOR REAL BUILD:
+    set getHttpsOptions.regectUnauthorized = true
+    set getHttpsOptions.hostname = 'hosted.dns'
+    replace instances of 'process.env.CSE_ID' and 'process.env.IMG_API_KEY'
+    from the variables in .env
+    include 'win.removeMenu()' in createWindow
+
+    FOR TEST PURPOSES:
+    set getHttpsOptions.regectUnauthorized = false
+    set getHttpsOptions.hostname = '127.0.0.1'
+    replace instances of secrets ('process.env.CSE_ID' and 'process.env.IMG_API_KEY')
+    remove 'win.removeMenu()' from createWindow
+
+    */
+
+
 const createWindow = (fileName) => { // function to make the window
     const win = new BrowserWindow({
         icon: path.join(__dirname, 'images/icon.png'),
@@ -33,20 +50,20 @@ const createWindow = (fileName) => { // function to make the window
             preload: path.join(__dirname, 'preload.js')
         }
     })
-    win.loadFile(`${fileName}.html`)
-    //win.removeMenu()
+    win.loadFile(`${fileName}.html`);
+    win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
     mainWindow = win;
 }
 
 app.whenReady().then(async () => { // Start the application
-    if (await isSignedIn())
+    if (await isSignedIn()) {
         createWindow('index'); // if the user is signed in(locally), have them go to the home page, otherwise re-login
-    else createWindow('login');
-    app.on('activate', () => { // allow event listener after the window is created
+    } else createWindow('login');
+    app.on('activate', async () => { // allow event listener after the window is created
         if (BrowserWindow.getAllWindows().length === 0) {
-            if (isSignedIn())
+            if (await isSignedIn()) {
                 createWindow('index');
-            else createWindow('login');
+            } else createWindow('login');
         }
     })
 })
@@ -57,8 +74,8 @@ app.on('window-all-closed', () => { // CLOSE THE APP
 
 
 
-ipcMain.on('attempt-login', (event, loginInfo) => { // open specified page
-    if (correctLoginCreds(loginInfo.user, loginInfo.pass)) {
+ipcMain.on('attempt-login', async (event, loginInfo) => { // open specified page
+    if (await correctLoginCreds(loginInfo.user, loginInfo.pass)) {
         mainWindow.close();
         createWindow('index');
     }
@@ -242,6 +259,7 @@ function getHttpsOptions(user, pass, mode, list, contentLen) {
         rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
         port: 2001,
         method: 'lupu',
+        timeout: 3000,
         headers: {
             'Content-Length': contentLen,
             'Content-Type': 'text/html',
@@ -274,8 +292,14 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
             //resolve(data); // whatever is passed to resolve goes to the Promises .then params
         });
 
-    }).on('error', (e) => {
-        console.error("[HTTPS SAVE] " + e);
+    })
+    req.on('error', (e) => {
+        console.error("[HTTPS LOGIN] " + e);
+        regect(e);
+    });
+    req.on('timeout', () => {
+        req.destroy();
+        regect("Connection Timeout");
     });
 
     req.write(listString);
@@ -285,33 +309,39 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
 async function tryLoginToServer(username, password) {
     try {
         const response = await getLoginResponse(username,password);
-        console.log(response + " is the response")
+        console.log(response + " is the response");
         return response == 200;
-      } catch (error) {
+    } catch (error) {
         console.error('Error:', error);
         return false;
-      }
+    }
 }
 
 async function getLoginResponse(username, password) {
     console.log("Attempting to login to Server..");
     return new Promise((resolve, regect) => {
-    https.get(getHttpsOptions(username,password,'login','',0), (res) => {
-        console.log('[HTTPS] statusCode:', res.statusCode);
-        console.log('[HTTPS] headers:', res.headers);
-        var data = ''
-        res.on('data', (d) => { // large data might come in chunks
-            data += d;
-        });
+        const req = https.request(getHttpsOptions(username,password,'login','',0), (res) => {
+            console.log('[HTTPS] statusCode:', res.statusCode);
+            console.log('[HTTPS] headers:', res.headers);
+            var data = '';
+            res.on('data', (d) => { // large data might come in chunks
+                data += d;
+            });
 
-        res.on('end', () => { // done chunking all data
-            resolve(res.statusCode);
+            res.on('end', () => { // done chunking all data
+                resolve(res.statusCode);
+            });
+        
         });
-    
-        }).on('error', (e) => {
+        req.on('error', (e) => {
             console.error("[HTTPS LOGIN] " + e);
-            regect(e);
+            regect(400);
         });
+        req.on('timeout', () => {
+            req.destroy();
+            regect(400);
+        });
+        req.end();
     });
 }
 
@@ -337,25 +367,31 @@ async function getListResponse(listPath) {
     let password = db.get('password');
 
     return new Promise((resolve, regect) => {
-    https.get(getHttpsOptions(username,password,'get',listPath,0), (res) => {
-        console.log('[HTTPS] statusCode:', res.statusCode);
-        console.log('[HTTPS] headers:', res.headers);
-        var data = ''
-        res.on('data', (d) => { // large data might come in chunks
-            data += d;
-        });
+        const req = https.request(getHttpsOptions(username,password,'get',listPath,0), (res) => {
+            console.log('[HTTPS] statusCode:', res.statusCode);
+            console.log('[HTTPS] headers:', res.headers);
+            var data = ''
+            res.on('data', (d) => { // large data might come in chunks
+                data += d;
+            });
 
-        res.on('end', () => { // done chunking all data
-            resolve({
-                statusCode: res.statusCode,
-                data: data
-            }); // whatever is passed to resolve goes to the Promises .then params
-        });
+            res.on('end', () => { // done chunking all data
+                resolve({
+                    statusCode: res.statusCode,
+                    data: data
+                }); // whatever is passed to resolve goes to the Promises .then params
+            });
     
-        }).on('error', (e) => {
+        });
+        req.on('error', (e) => {
             console.error("[HTTPS GET] " + e);
             regect(e);
         });
+        req.on('timeout', () => {
+            req.destroy();
+            regect("Connection Timeout");
+        });
+        req.end();
     });
 }
 

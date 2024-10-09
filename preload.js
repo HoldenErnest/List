@@ -3,7 +3,7 @@
 
 const { contextBridge, ipcRenderer, app } = require("electron");
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', (event) => {
     
     const replaceText = (selector, text) => {
         const element = document.getElementById(selector);
@@ -11,7 +11,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     replaceText(`install-version`, "1.2.1"); // TODO: set to app.getVersion();
-    ipcRenderer.send('load-last-list'); // auto load the list
+
+    ipcRenderer.send('load-last-list'); // auto load the list // TODO MAKE THESE ONLY RUN WHEN PAGE IS index.html
     ipcRenderer.send('update-avail-lists');
 });
 
