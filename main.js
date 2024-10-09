@@ -24,14 +24,14 @@ var currentListName; // keep track of the list youre currently displaying to ren
     FOR REAL BUILD:
     set getHttpsOptions.regectUnauthorized = true
     set getHttpsOptions.hostname = 'hosted.dns'
-    replace instances of 'process.env.CSE_ID' and 'process.env.IMG_API_KEY'
+    replace instances of ('process.env.CSE_ID', 'process.env.IMG_API_KEY', ect)
     from the variables in .env
     include 'win.removeMenu()' in createWindow
 
     FOR TEST PURPOSES:
     set getHttpsOptions.regectUnauthorized = false
     set getHttpsOptions.hostname = '127.0.0.1'
-    replace instances of secrets ('process.env.CSE_ID' and 'process.env.IMG_API_KEY')
+    replace instances of secrets ('process.env.CSE_ID', 'process.env.IMG_API_KEY', ect)
     remove 'win.removeMenu()' from createWindow
 
     */
@@ -254,7 +254,7 @@ function toTitleCase(str) {
 // SERVER CONNECTION STUFF---------------------------------
 function getHttpsOptions(user, pass, mode, list, contentLen) {
     var httpsOptions = {
-        hostname: '127.0.0.1',
+        hostname: '127.0.0.1', //'127.0.0.1'
         path: "/",
         rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
         port: 2001,
@@ -294,7 +294,7 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
 
     })
     req.on('error', (e) => {
-        console.error("[HTTPS LOGIN] " + e);
+        console.error("[HTTPS Write] " + e);
         regect(e);
     });
     req.on('timeout', () => {
