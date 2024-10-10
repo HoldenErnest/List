@@ -252,7 +252,7 @@ function toTitleCase(str) {
 }
 
 // SERVER CONNECTION STUFF---------------------------------
-function getHttpsOptions(user, pass, mode, list, contentLen) {
+function getHttpsOptions(user, pass, mode, list, contentLen, version) {
     var httpsOptions = {
         hostname: '127.0.0.1', //'127.0.0.1'
         path: "/",
@@ -268,6 +268,8 @@ function getHttpsOptions(user, pass, mode, list, contentLen) {
             'Pass': pass, // secretPassword
             'Mode': mode, // 'login', 'perms', 'get', 'save'
             'List': list, // otherUser/alist -- alist
+            'Version': version, // what is this version. millisSinceEpoch
+            'BVersion': -1 // the latest server version this version was based off (used to detect mergeconflicts with shared lists)
           }
     };
     return httpsOptions;
@@ -279,7 +281,7 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
 
     // Communicate with server:
     console.log("Attempting to save to Server..");
-    const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length), (res) => {
+    const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length, Date.now(), -1), (res) => {// TODO: change bversion 
 
         // if res.statusCode == 200 {give notification} else {give bad notification}
         var data = ''
@@ -320,7 +322,7 @@ async function tryLoginToServer(username, password) {
 async function getLoginResponse(username, password) {
     console.log("Attempting to login to Server..");
     return new Promise((resolve, regect) => {
-        const req = https.request(getHttpsOptions(username,password,'login','',0), (res) => {
+        const req = https.request(getHttpsOptions(username,password,'login','',0, -1, -1), (res) => {
             console.log('[HTTPS] statusCode:', res.statusCode);
             console.log('[HTTPS] headers:', res.headers);
             var data = '';
@@ -367,7 +369,7 @@ async function getListResponse(listPath) {
     let password = db.get('password');
 
     return new Promise((resolve, regect) => {
-        const req = https.request(getHttpsOptions(username,password,'get',listPath,0), (res) => {
+        const req = https.request(getHttpsOptions(username,password,'get',listPath,0, -1, -1), (res) => { // TODO: change version and bversion 
             console.log('[HTTPS] statusCode:', res.statusCode);
             console.log('[HTTPS] headers:', res.headers);
             var data = ''
@@ -395,4 +397,4 @@ async function getListResponse(listPath) {
     });
 }
 
-var bodyString = '\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n\"BACKU\\P LIST\",\"WRONG DB, CHOOSE ANOTHER LIST\",\"0\",\"\",\"Jan 01 2001\",\"\"';
+var testListString = '\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n\"BACKU\\P LIST\",\"WRONG DB, CHOOSE ANOTHER LIST\",\"0\",\"\",\"Jan 01 2001\",\"\"';
