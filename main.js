@@ -369,7 +369,7 @@ async function getListResponse(listPath) {
     let password = db.get('password');
 
     return new Promise((resolve, regect) => {
-        const req = https.request(getHttpsOptions(username,password,'get',listPath,0, -1, -1), (res) => { // TODO: change version and bversion 
+        const req = https.request(getHttpsOptions(username,password,'get',listPath,0, -1, -1), (res) => { // TODO: change version 
             console.log('[HTTPS] statusCode:', res.statusCode);
             console.log('[HTTPS] headers:', res.headers);
             var data = ''
