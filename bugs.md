@@ -12,14 +12,14 @@
 
 
 ## Design
-- Change the icon to be something better and or cooler
-- maybe a name change to be something better
+- Change the icon to be something better and or cooler ✓
+- maybe a name change to be something better ✓
 - setting? Auto fill in date when typing in six numbers next to each other, ex: 020724 ("too much work im dying" -Holden)
 
 
 ## Bugs
-- if you change title, empty the buffer for image urls (right now they stay on the last images searched)
-- Not sure if this is actually a bug but when dragging the list around on my desktop the - and fullscreen buttons flicker
+- if you change title, empty the buffer for image urls (right now they stay on the last images searched) ✓
+- Not sure if this is actually a bug but when dragging the list around on my desktop the - and fullscreen buttons flicker (scaling issue with wondows not  a bug) ✓
 
 ## Potential Settings
 - things listed in other catagories(too lazy to look through rn)
