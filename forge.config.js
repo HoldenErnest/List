@@ -9,7 +9,7 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         "setupIcon": "images\\icon.ico",
-        "iconUrl": "https://www.iconarchive.com/download/i90049/icons8/windows-8/Astrology-Year-Of-Monkey.ico"
+        "iconUrl": "https://raw.githubusercontent.com/HoldenErnest/List/refs/heads/clientDevs/Images/icon.ico"
       },
     },
     {
