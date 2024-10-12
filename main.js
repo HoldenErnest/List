@@ -226,8 +226,8 @@ function updateAvailableLists() {
         if (name.length <= 4 || !name.endsWith('.csv')) return null;
         return name.substring(0,name.length - 4);
     });
-    files.filter(n => n); // remove all null elements
-    //console.log(`Path: ${fullPath} contains: ${files}`);
+    files = files.filter( n => n); // remove all null elements
+    console.log(`Path: ${fullPath} contains: ${files}`);
     currentListName = currentListName || db.get("lastList");
     mainWindow.webContents.send("recieve-list-names", {allNames:files,selectedList:currentListName});
 }
