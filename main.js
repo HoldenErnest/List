@@ -10,6 +10,7 @@ const https = require('node:https');
 const fs = require("fs");
 const JSONdb = require('simple-json-db');
 const db = new JSONdb(path.join(app.getPath("userData"), 'userPrefs.json'));
+var userMetaData;
 var mainWindow;
 
 require('dotenv').config();
@@ -87,6 +88,7 @@ const correctLoginCreds = async (username, password) => {
     if (goodLogin) {
         db.set('uuid', username); // reset the uuid since this is the latest known real login
         db.set('password', password);
+        userMetaData = new JSONdb(path.join(app.getPath("userData"), 'clientLists', username, 'metaData.json'));
         return true;
     }
     return false;
@@ -128,7 +130,8 @@ ipcMain.on('get-urls', (event, searched) => {
     }
 });
 ipcMain.on('rename-list', (event, fileName) => {
-    var fullPath = path.join(app.getPath("userData"), "clientLists");
+    var username = db.get('uuid');
+    var fullPath = getCurrentListPath();
     var oldPath = path.join(fullPath,currentListName) + ".csv";
     var newPath = path.join(fullPath,fileName) + ".csv";
     fs.rename(
@@ -156,7 +159,7 @@ function saveList(csvString) {
 
     var fullPath = "";
     if (!serverHasFile) {
-        fullPath = path.join(app.getPath("userData"), "clientLists");
+        fullPath = getCurrentListPath();
         if (!fs.existsSync(fullPath)){
             fs.mkdirSync(fullPath);
         }
@@ -191,9 +194,9 @@ async function displayList(fileName) {
     }
 
     // read from a local file instead
-    console.log("reading " + fileName + " locally");
+    console.log("reading /" + fileName + " locally");
     var fullPath = "";
-    fullPath = path.join(app.getPath("userData"), "clientLists");
+    fullPath = getCurrentListPath();
     if (!fs.existsSync(fullPath)){
         return;
     }
@@ -211,17 +214,16 @@ async function displayList(fileName) {
 }
 function updateAvailableLists() {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
-
     var fullPath = "";
     if (!serverHasFile) {
-        fullPath = path.join(app.getPath("userData"), "clientLists");
+        fullPath = getCurrentListPath();
         if (!fs.existsSync(fullPath)){
             return;
         }
     }
     var files = fs.readdirSync(fullPath);
     files = files.map((name) => {
-        if (name.length <= 4 || !name.endsWith('.csv')) return;
+        if (name.length <= 4 || !name.endsWith('.csv')) return null;
         return name.substring(0,name.length - 4);
     });
     files.filter(n => n); // remove all null elements
@@ -250,6 +252,12 @@ function parseToArray(stringVal) {
 function toTitleCase(str) {
     return str[0].toUpperCase() + str.slice(1);
 }
+function getCurrentListPath() {
+    return path.join(app.getPath("userData"), "clientLists", db.get('uuid'));
+}
+function getCurrentListVersion() {
+    return parseInt(userMetaData.get(db.get('lastList')+'-ver'));
+}
 
 // SERVER CONNECTION STUFF---------------------------------
 function getHttpsOptions(user, pass, mode, list, contentLen, version) {
@@ -268,8 +276,7 @@ function getHttpsOptions(user, pass, mode, list, contentLen, version) {
             'Pass': pass, // secretPassword
             'Mode': mode, // 'login', 'perms', 'get', 'save'
             'List': list, // otherUser/alist -- alist
-            'Version': version, // what is this version. millisSinceEpoch
-            'BVersion': -1 // the latest server version this version was based off (used to detect mergeconflicts with shared lists)
+            'Version': version ? version : 0, // what is this version. millisSinceEpoch // this represents the base version
           }
     };
     return httpsOptions;
@@ -281,9 +288,8 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
 
     // Communicate with server:
     console.log("Attempting to save to Server..");
-    const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length, Date.now(), -1), (res) => {// TODO: change bversion 
+    const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length, getCurrentListVersion()), (res) => {// TODO: change bversion 
 
-        // if res.statusCode == 200 {give notification} else {give bad notification}
         var data = ''
         res.on('data', (d) => { // large data might come in chunks
             data += d;
@@ -291,7 +297,12 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
         });
 
         res.on('end', () => { // done chunking all data
-            //resolve(data); // whatever is passed to resolve goes to the Promises .then params
+            if (res.statusCode == 200) {
+                userMetaData.set(db.get("lastList")+'-ver', parseInt(res.headers['version']));
+            } else if (res.statusCode == 300) {
+                console.log("CONFLICT trying to save..");
+                // TODO: do things with conflict merging!!!!!!!!!!!!!!!!!!!
+            } else console.log("no problem?");
         });
 
     })
@@ -311,8 +322,8 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
 async function tryLoginToServer(username, password) {
     try {
         const response = await getLoginResponse(username,password);
-        console.log(response + " is the response");
-        return response == 200;
+        console.log(response.statusCode + " GET response");
+        return response.statusCode == 200;
     } catch (error) {
         console.error('Error:', error);
         return false;
@@ -322,7 +333,7 @@ async function tryLoginToServer(username, password) {
 async function getLoginResponse(username, password) {
     console.log("Attempting to login to Server..");
     return new Promise((resolve, regect) => {
-        const req = https.request(getHttpsOptions(username,password,'login','',0, -1, -1), (res) => {
+        const req = https.request(getHttpsOptions(username,password,'login','',0, 0), (res) => {
             console.log('[HTTPS] statusCode:', res.statusCode);
             console.log('[HTTPS] headers:', res.headers);
             var data = '';
@@ -331,7 +342,7 @@ async function getLoginResponse(username, password) {
             });
 
             res.on('end', () => { // done chunking all data
-                resolve(res.statusCode);
+                resolve(res);
             });
         
         });
@@ -351,13 +362,14 @@ async function tryLoadList(listPath) {
     try {
         const response = await getListResponse(listPath);
         if (response.statusCode == 200) {
+            userMetaData.set(db.get("lastList")+'-ver', parseInt(response.version));
             return response.data;
         } else {
             console.log("problem loading list " + listPath);
             return "";
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error('READ ERROR:', error);
         return "";
     }
 }
@@ -369,7 +381,7 @@ async function getListResponse(listPath) {
     let password = db.get('password');
 
     return new Promise((resolve, regect) => {
-        const req = https.request(getHttpsOptions(username,password,'get',listPath,0, -1, -1), (res) => { // TODO: change version 
+        const req = https.request(getHttpsOptions(username,password,'get',listPath,0, getCurrentListVersion()), (res) => { // TODO: change version 
             console.log('[HTTPS] statusCode:', res.statusCode);
             console.log('[HTTPS] headers:', res.headers);
             var data = ''
@@ -378,9 +390,11 @@ async function getListResponse(listPath) {
             });
 
             res.on('end', () => { // done chunking all data
+                console.log('[HTTPS] headers:', res.headers);
                 resolve({
                     statusCode: res.statusCode,
-                    data: data
+                    data: data,
+                    version: res.headers['version']
                 }); // whatever is passed to resolve goes to the Promises .then params
             });
     
