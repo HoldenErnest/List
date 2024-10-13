@@ -38,7 +38,6 @@
     </div>
     <!-- This is a placeholder item for a list icon and will not be displayed ^^ -->
     <div class="sidebar-list placeholder" id="sidebar-list" value=""></div>
-    
 
     <!--Start of the actual page-->
     <div id="sidebar" title="**BETA** Lists are stored on the clients end currently, find them in '%appdata%\chimplist\clientLists'">
@@ -71,6 +70,13 @@
       </div>
     </div>
     <div id="list-items"></div> <!--where the items live-->
+
+    <!-- Where the notifications are -->
+    <div id="notification-area">
+      <div class="notification error" id="notification" value="">Error: Something failed</div>
+      <div class="notification success" id="notification" value="">Success: Loaded list 'list'</div>
+      <div class="notification warning" id="notification" value="">Warning: asffasfasfsafasafsfasfList loaded locally</div>
+    </div>
 
     <div id="footer">
       Lupusregina Version <span id="install-version">-</span>

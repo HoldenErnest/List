@@ -526,3 +526,13 @@ function toggleAscendingSort() {
 
     sort_all();
 }
+
+function displayNotification(type, message) { // display a notification of a certain type.
+    // type can be either 'success' 'warning' 'error'
+
+    // change color and maybe icon based on type
+
+    // set the message
+
+    // run the animation to display
+}
