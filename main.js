@@ -52,7 +52,7 @@ const createWindow = (fileName) => { // function to make the window
         }
     })
     win.loadFile(`${fileName}.html`);
-    win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
+    //win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
     mainWindow = win;
 }
 
@@ -295,8 +295,7 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
 
     // Communicate with server:
     console.log("Attempting to save to Server..");
-    const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length, getCurrentListVersion()), (res) => {// TODO: change bversion 
-
+    const req = https.request(getHttpsOptions(username,password,'save',currentListName,listString.length, getCurrentListVersion()), (res) => {
         var data = ''
         res.on('data', (d) => { // large data might come in chunks
             data += d;
@@ -304,11 +303,20 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
         });
 
         res.on('end', () => { // done chunking all data
+            const version = parseInt(res.headers['version']);
             if (res.statusCode == 200) {
-                userMetaData.set(db.get("lastList")+'-ver', parseInt(res.headers['version']));
+                userMetaData.set(db.get("lastList")+'-ver', version);
             } else if (res.statusCode == 300) {
-                console.log("CONFLICT trying to save..");
-                // TODO: do things with conflict merging!!!!!!!!!!!!!!!!!!!
+                console.log("There was a conflict trying to save..");
+                // TODO:? Maybe do things with conflict merging instead of replacing
+
+                saveList(data, false); // make sure the cache is reset
+                userMetaData.set(db.get("lastList")+'-ver', version);
+                // send the data to be displayed
+                var listArray = parseToArray(data);
+                mainWindow.webContents.send("display-list", listArray);
+                
+
             } else console.log("no problem?");
         });
 

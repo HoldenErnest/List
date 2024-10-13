@@ -29,3 +29,8 @@ https://www.electronjs.org/docs/latest/tutorial/quick-start
 
 ## Regex search results
 ![Regex search results](Images/CL-search.png)
+
+# Remote Hosting / Serving
+
+## Save Conflicts (Could be Merge-Capable in the future)
+![Save Conflicts](Images/SaveConflict.png)

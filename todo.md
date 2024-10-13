@@ -20,6 +20,7 @@
 
 ## Bugs
 - if you change title, empty the buffer for image urls (right now they stay on the last images searched)
+- (testing) app crashed when there was a conflict save (idk how to replicate)
 
 ## Potential Settings
 - things listed in other catagories(too lazy to look through rn)

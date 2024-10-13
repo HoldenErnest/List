@@ -22,7 +22,7 @@ var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
 var lastImageNumber = 0; // what image was the last selected for some reason
-var allListsArray; // list of names that are all your available lists
+var allListsArray = []; // list of names that are all your available lists
 
 var tagsDictionary = {}; // a dictonary of all tags the user has
 
@@ -323,6 +323,7 @@ window.api.receive('update-image', (urls) => {
 
 window.api.receive('display-list', (listData) => {
     // when Main wants a list displayed (this is essentially "IPCrenderer.on")
+    removeAllItems();
     displayListItems(listData);
 });
 function displayListItems(listData) {
@@ -460,7 +461,7 @@ function newList() { // crete a new list based off #new-list-input
     escapePress();
 }
 function toUsableFilename(inputString) {
-    return inputString.replace(/[/\\?%*:|"<>]/g, '-');
+    return inputString.replace(/[/ \\?%*:|"<>]/g, '-');
 }
 function listNameExists(listName) {
     for (var i = 0; i < allListsArray.length; i++) {
@@ -499,7 +500,7 @@ function createList(listName, isSelected) { // A new list display on the sidebar
     clone.addEventListener("click", function(evt) {
         //if the list is already selected dont change anything
         if (Array.from(this.classList).includes("selected")) return;
-        removeAllItems();
+        removeAllItems(); // You can remove this to make it so that any newly created list derrives from the currently selected list.
         loadList(this.value);
         setSelected(this);
     });
@@ -509,9 +510,9 @@ function createList(listName, isSelected) { // A new list display on the sidebar
 function setSelected(list) { // sets the selected list (not list Item)
     var parentElement = document.getElementById("sidebar");
     Array.from(parentElement.getElementsByClassName("sidebar-list")).forEach(list => {
-        list.classList.remove("selected");
+        list.classList.remove("selected"); // remove selected class from all others
     });
-    list.classList.add("selected");
+    list.classList.add("selected"); // set this new list to selected
 }
 function toggleAscendingSort() {
     toggleElem = this;
