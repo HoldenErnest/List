@@ -112,7 +112,7 @@ ipcMain.on('update-avail-lists', (event) => { // ran from preload
 });
 ipcMain.on('save-list', (event, csvString) => {
     console.log("saving list hopefully");
-    saveList(csvString);
+    saveList(csvString, true);
 });
 ipcMain.on('get-urls', (event, searched) => {
     console.log("searching for: " + searched);
@@ -153,7 +153,7 @@ ipcMain.on('rename-list', (event, fileName) => {
 // END EVENTS
 
 
-function saveList(csvString) {
+function saveList(csvString, saveRemote) {
     var serverHasFile = false;
     var fileName = currentListName;
 
@@ -167,7 +167,7 @@ function saveList(csvString) {
     fullPath = path.join(fullPath,fileName);
     fullPath += ".csv";
     
-    csvString = "\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n" + csvString;
+    if (saveRemote) csvString = "\"title\",\"notes\",\"rating\",\"tags\",\"date\",\"image\"\n" + csvString;
     fs.writeFile(fullPath, csvString, err => {
         if (err) {
           console.error(err);
@@ -175,7 +175,8 @@ function saveList(csvString) {
           console.log("Saved file: '" + fileName + "'!")
         }
     });
-    trySaveListToServer(csvString);
+    if (saveRemote)
+        trySaveListToServer(csvString);
 }
 async function displayList(fileName) {
     var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
@@ -189,6 +190,7 @@ async function displayList(fileName) {
     
     if (serverData != "") {
         var listArray = parseToArray(serverData);
+        saveList(serverData, false); // cache this list locally when you load it
         mainWindow.webContents.send("display-list", listArray);
         return;
     }
@@ -212,20 +214,25 @@ async function displayList(fileName) {
         mainWindow.webContents.send("display-list", listArray);
     });
 }
-function updateAvailableLists() {
-    var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
+async function updateAvailableLists() {
     var fullPath = "";
-    if (!serverHasFile) {
-        fullPath = getCurrentListPath();
+    var files = [];
+
+    var serverData = await tryGetLists();
+    if (serverData) { // get all server-available lists for this user
+        files = serverData.split(' ');
+    } else {
+        console.log("Loading names of all lists locally");
+        fullPath = getCurrentListPath(); // ClientLists/username
         if (!fs.existsSync(fullPath)){
             return;
         }
+        files = fs.readdirSync(fullPath);
+        files = files.map((name) => {
+            if (name.length <= 4 || !name.endsWith('.csv')) return null;
+            return name.substring(0,name.length - 4);
+        });
     }
-    var files = fs.readdirSync(fullPath);
-    files = files.map((name) => {
-        if (name.length <= 4 || !name.endsWith('.csv')) return null;
-        return name.substring(0,name.length - 4);
-    });
     files = files.filter( n => n); // remove all null elements
     console.log(`Path: ${fullPath} contains: ${files}`);
     currentListName = currentListName || db.get("lastList");
@@ -334,8 +341,6 @@ async function getLoginResponse(username, password) {
     console.log("Attempting to login to Server..");
     return new Promise((resolve, regect) => {
         const req = https.request(getHttpsOptions(username,password,'login','',0, 0), (res) => {
-            console.log('[HTTPS] statusCode:', res.statusCode);
-            console.log('[HTTPS] headers:', res.headers);
             var data = '';
             res.on('data', (d) => { // large data might come in chunks
                 data += d;
@@ -382,8 +387,6 @@ async function getListResponse(listPath) {
 
     return new Promise((resolve, regect) => {
         const req = https.request(getHttpsOptions(username,password,'get',listPath,0, getCurrentListVersion()), (res) => { // TODO: change version 
-            console.log('[HTTPS] statusCode:', res.statusCode);
-            console.log('[HTTPS] headers:', res.headers);
             var data = ''
             res.on('data', (d) => { // large data might come in chunks
                 data += d;
@@ -401,6 +404,52 @@ async function getListResponse(listPath) {
         });
         req.on('error', (e) => {
             console.error("[HTTPS GET] " + e);
+            regect(e);
+        });
+        req.on('timeout', () => {
+            req.destroy();
+            regect("Connection Timeout");
+        });
+        req.end();
+    });
+}
+
+async function tryGetLists() {
+    try {
+        const response = await getAllListsResponse();
+        if (response.statusCode == 200) {
+            return response.data;
+        } else {
+            console.log("problem loading all Lists " + listPath);
+            return "";
+        }
+      } catch (error) {
+        console.error('READ ERROR:', error);
+        return "";
+    }
+}
+async function getAllListsResponse() {
+    console.log("Attempting to retrieve names of lists on server..");
+    let username = db.get('uuid');
+    let password = db.get('password');
+
+    return new Promise((resolve, regect) => {
+        const req = https.request(getHttpsOptions(username,password,'lists','',0, 0), (res) => { // TODO: change version 
+            var data = ''
+            res.on('data', (d) => { // large data might come in chunks
+                data += d;
+            });
+
+            res.on('end', () => { // done chunking all data
+                resolve({
+                    statusCode: res.statusCode,
+                    data: data,
+                    version: res.headers['version']
+                }); // whatever is passed to resolve goes to the Promises .then params
+            });
+    
+        });
+        req.on('error', (e) => {
             regect(e);
         });
         req.on('timeout', () => {
