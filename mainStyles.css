@@ -490,7 +490,8 @@ option:hover {
   text-decoration: none;
   user-select: none;
   border-radius: 3px;
-  
+  animation-duration: 0.5s;
+  animation-name: slidein;
 }
 .notification.error {
   border: solid 1px red;
@@ -510,5 +511,14 @@ option:hover {
 .notification:hover {
   opacity: 1.0;
 }
-
+@keyframes slidein {
+  from {
+    translate: 100vw 0;
+    scale: 200% 1;
+  }
+  to {
+    translate: 0 0;
+    scale: 100% 1;
+  }
+}
 /*#notification.placeholder {}*/

@@ -158,11 +158,9 @@ function saveList(csvString, saveRemote) {
     var fileName = currentListName;
 
     var fullPath = "";
-    if (!serverHasFile) {
-        fullPath = getCurrentListPath();
-        if (!fs.existsSync(fullPath)){
-            fs.mkdirSync(fullPath);
-        }
+    fullPath = getCurrentListPath();
+    if (!fs.existsSync(fullPath)){
+        fs.mkdirSync(fullPath);
     }
     fullPath = path.join(fullPath,fileName);
     fullPath += ".csv";
@@ -179,7 +177,6 @@ function saveList(csvString, saveRemote) {
         trySaveListToServer(csvString);
 }
 async function displayList(fileName) {
-    var serverHasFile = false; // TODO: request to server to see if it has a list, if not display client version list or show error
     fileName = fileName || "newList";
     currentListName = fileName;
     db.set("lastList",fileName);
@@ -194,7 +191,6 @@ async function displayList(fileName) {
         mainWindow.webContents.send("display-list", listArray);
         return;
     }
-
     // read from a local file instead
     console.log("reading /" + fileName + " locally");
     var fullPath = "";
@@ -266,6 +262,10 @@ function getCurrentListVersion() {
     return parseInt(userMetaData.get(db.get('lastList')+'-ver'));
 }
 
+function sendNotification(type,message) {
+    mainWindow.webContents.send("send-notification", {type:type,message:message});
+}
+
 // SERVER CONNECTION STUFF---------------------------------
 function getHttpsOptions(user, pass, mode, list, contentLen, version) {
     var httpsOptions = {
@@ -306,7 +306,9 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
             const version = parseInt(res.headers['version']);
             if (res.statusCode == 200) {
                 userMetaData.set(db.get("lastList")+'-ver', version);
+                sendNotification('success','List Saved..');
             } else if (res.statusCode == 300) {
+                sendNotification('error','Conflict saving: You made changes to an outdated version of the list');
                 console.log("There was a conflict trying to save..");
                 // TODO:? Maybe do things with conflict merging instead of replacing
 
@@ -322,12 +324,12 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
 
     })
     req.on('error', (e) => {
+        sendNotification('warning','Connection Error: List Saved Locally..');
         console.error("[HTTPS Write] " + e);
-        regect(e);
     });
     req.on('timeout', () => {
+        sendNotification('warning','Connection Timeout');
         req.destroy();
-        regect("Connection Timeout");
     });
 
     req.write(listString);

@@ -30,7 +30,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         receive: (channel, func) => {
-            let validChannels = ['display-list','update-image','recieve-list-names'];
+            let validChannels = ['display-list','update-image','recieve-list-names','send-notification'];
             if (validChannels.includes(channel)) {
                 // Deliberately strip event as it includes `sender` 
                 ipcRenderer.on(channel, (event, ...args) => func(...args));
