@@ -521,4 +521,26 @@ option:hover {
     scale: 100% 1;
   }
 }
-/*#notification.placeholder {}*/
+/*Right click menu*/
+#listMenuRC {
+  position: absolute;
+  background-color: #111;
+  color: lightgray;
+  border: 1px solid #333;
+  user-select: none;
+  display: none; /* Initially hidden */
+}
+#listMenuRC * {
+  width: calc(100% - 20px); /* - 2*padding */
+  padding: 10px;
+}
+#listMenuRC *:hover {
+  background-color: #222;
+}
+#listRemoveBtn:hover { /* OVERRIDE THE OTHER color*/
+  color: #cb0000;
+}
+
+#listMenuRC.show {
+  display: block; /* Show the menu */
+}

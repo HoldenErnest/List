@@ -28,6 +28,13 @@ var tagsDictionary = {}; // a dictonary of all tags the user has
 
 var sortOrder = 1;
 
+document.addEventListener('click', (event) => { // EVENT FOR ALL CLICKING
+    const contextMenu = document.getElementById('listMenuRC');
+    if (!contextMenu.contains(event.target)) { // hide the menu if its not a click in that menu
+      contextMenu.classList.remove('show');
+    }
+});
+
 function setupListListeners() { // when you double click a list
     var allListElements = Array.from(document.getElementsByClassName('sidebar-list'));
     allListElements.forEach((listE) => {
@@ -497,6 +504,16 @@ function createList(listName, isSelected) { // A new list display on the sidebar
     clone.innerHTML = listName;
     clone.value = listName; // TODO make this more visible
     parentElement.insertBefore(clone, parentElement.firstChild);
+    clone.addEventListener('contextmenu', function(event) { // RIGHT CLICK MENU
+        event.preventDefault();
+        
+        const contextMenu = document.getElementById('listMenuRC');
+        contextMenu.value = this.value;
+        contextMenu.style.left = event.clientX + 'px';
+        contextMenu.style.top = event.clientY + 'px';
+        contextMenu.classList.add('show');
+    });
+
     clone.addEventListener("click", function(evt) {
         //if the list is already selected dont change anything
         if (Array.from(this.classList).includes("selected")) return;
@@ -526,7 +543,7 @@ function toggleAscendingSort() {
 
     sort_all();
 }
-
+//NOTIFICAITON STUFF
 window.api.receive('send-notification', (notiObj) => {
     displayNotification(notiObj.type,notiObj.message);
 });
@@ -560,4 +577,21 @@ function fadeOutAfter(element, seconds) {
         element.remove();
       }, fadeEffectTime * 1000);
     }, seconds * 1000);
-  }
+}
+
+// RIGHT CLICK MENU-------
+document.getElementById('listRenameBtn').addEventListener('click', function() {
+    const contextMenu = this.parentElement;
+    console.log(contextMenu.value + " is the list getting renamed");
+    //TODO: implement
+});
+document.getElementById('listRemoveBtn').addEventListener('click', function() {
+    const contextMenu = this.parentElement;
+    console.log(contextMenu.value + " is the list getting removed");
+    //TODO: implement
+});
+document.getElementById('listSettingsBtn').addEventListener('click', function() {
+    const contextMenu = this.parentElement;
+    console.log(contextMenu.value + " is the list to apply settings");
+    //TODO: implement
+});
