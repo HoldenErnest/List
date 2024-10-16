@@ -170,7 +170,7 @@ function saveList(csvString, saveRemote) {
         if (err) {
           console.error(err);
         } else {
-          console.log("Saved file: '" + fileName + "'!")
+          console.log("Locally chached file: '" + fileName + "'!")
         }
     });
     if (saveRemote)
@@ -229,6 +229,7 @@ async function updateAvailableLists() {
             return name.substring(0,name.length - 4);
         });
     }
+    
     files = files.filter( n => n); // remove all null elements
     console.log(`Path: ${fullPath} contains: ${files}`);
     currentListName = currentListName || db.get("lastList");
@@ -307,9 +308,13 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
             if (res.statusCode == 200) {
                 userMetaData.set(db.get("lastList")+'-ver', version);
                 sendNotification('success','List Saved..');
-            } else if (res.statusCode == 300) {
-                sendNotification('error','Conflict saving: You made changes to an outdated version of the list');
-                console.log("There was a conflict trying to save..");
+            } else if (parseInt(res.statusCode/100) == 3) {
+                if (res.statusCode == 300)
+                    sendNotification('error','Conflict saving: You made changes to an outdated version of the list');
+                else if (res.statusCode == 301) {
+                    sendNotification('error','You are not allowed write permissions to this list');
+                }
+                
                 // TODO:? Maybe do things with conflict merging instead of replacing
 
                 saveList(data, false); // make sure the cache is reset
@@ -319,7 +324,7 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
                 mainWindow.webContents.send("display-list", listArray);
                 
 
-            } else console.log("no problem?");
+            } else console.log("Weird status code for write");
         });
 
     })

@@ -461,7 +461,7 @@ function newList() { // crete a new list based off #new-list-input
     escapePress();
 }
 function toUsableFilename(inputString) {
-    return inputString.replace(/[/ \\?%*:|"<>]/g, '-');
+    return inputString.replace(/[/ \\?%*:|"<>]./g, '-');
 }
 function listNameExists(listName) {
     for (var i = 0; i < allListsArray.length; i++) {
