@@ -3,6 +3,7 @@
 - add option to remove lists (include an are you sure by making user input their password)
 - allow access offline (configure an "I want to use this offline" button)
 - login page button
+- settings page (see project-styling.drawio)
 
 
 ## Features
