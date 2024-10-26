@@ -18,6 +18,7 @@ document.getElementById("add-item-btn").onclick = newItem;
 document.getElementById("new-list-button").onclick = newList;
 document.getElementById("sort-order").onclick = toggleAscendingSort;
 
+var warnedNoSave = false; // if you havent saved and you try to leave, warn the user ONCE, when they next try again, let them 
 var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
@@ -158,10 +159,16 @@ function madeEdit(anItem) { // anytime an item is changed, call this method to s
 function showSaveButton() {
     var saveBtn = document.getElementById("save-check");
     saveBtn.checked = true;
-
+}
+function hideSaveButton() {
+    var saveBtn = document.getElementById("save-check");
+    saveBtn.checked = false;
+    madeChange = false;
+    displayNotification("warning","Changes discarded");
 }
 function saveList() {
     madeChange = false;
+    // dont have to use hideSaveButton() since its toggled off when you click it
     var allItems = document.querySelectorAll('#list-items .item');
     var csvString = "";
     for (let i = 0; i < allItems.length; i++) { // Optimization? what?
@@ -427,7 +434,7 @@ function addSubmitButton(anItem) { // when you make a new item, have the id slot
 
         sort_all();
         madeEdit(anItem);
-        hasNew = false;
+        hasNew = false; // when youve saved this new item, make sure to allow other items to be created
     }
     theId.onmouseenter = function() {
         theId.style.backgroundColor = "#151";
@@ -517,6 +524,18 @@ function createList(listName, isSelected) { // A new list display on the sidebar
     clone.addEventListener("click", function(evt) {
         //if the list is already selected dont change anything
         if (Array.from(this.classList).includes("selected")) return;
+
+        if (madeChange) {
+            if (!warnedNoSave) {
+                warnedNoSave = true;
+                displayNotification("warning","Changes not saved! Press again to discard changes")
+                return;
+            }
+            //if youve already warned them and they decide to discard changes, remove save button
+            hideSaveButton();
+        }
+        warnedNoSave = false;
+
         removeAllItems(); // You can remove this to make it so that any newly created list derrives from the currently selected list.
         loadList(this.value);
         setSelected(this);
@@ -525,6 +544,7 @@ function createList(listName, isSelected) { // A new list display on the sidebar
 }
 
 function setSelected(list) { // sets the selected list (not list Item)
+    hasNew = false;
     var parentElement = document.getElementById("sidebar");
     Array.from(parentElement.getElementsByClassName("sidebar-list")).forEach(list => {
         list.classList.remove("selected"); // remove selected class from all others
