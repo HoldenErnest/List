@@ -4,6 +4,7 @@
 - allow access offline (configure an "I want to use this offline" button)
 - login page button
 - settings page (see project-styling.drawio)
+- link icon next to shared lists. maybe also initials of owner?
 
 
 ## Features
