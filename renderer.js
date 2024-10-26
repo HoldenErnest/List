@@ -612,6 +612,5 @@ document.getElementById('listRemoveBtn').addEventListener('click', function() {
 });
 document.getElementById('listSettingsBtn').addEventListener('click', function() {
     const contextMenu = this.parentElement;
-    console.log(contextMenu.value + " is the list to apply settings");
-    //TODO: implement
+    window.api.send("open-settings", {listName:contextMenu.value});
 });

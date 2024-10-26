@@ -12,6 +12,7 @@ const JSONdb = require('simple-json-db');
 const db = new JSONdb(path.join(app.getPath("userData"), 'userPrefs.json'));
 var userMetaData;
 var mainWindow;
+var otherMenu;
 
 require('dotenv').config();
 var imageSearch = require('image-search-google');
@@ -52,19 +53,36 @@ const createWindow = (fileName) => { // function to make the window
         }
     })
     win.loadFile(`${fileName}.html`);
-    //win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
+    win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
     mainWindow = win;
+}
+function createOtherWindow(optionsObject) {
+    const win = new BrowserWindow({
+    icon: path.join(__dirname, 'images/icon.png'),
+        autoHideMenuBar: true,
+        width: 640, // 800
+        height: 480, // 600
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: true,
+            enableRemoteModule: false,
+            preload: path.join(__dirname, `${optionsObject.pagename}Preload.js`)
+        }
+    })
+    win.loadFile(`${optionsObject.pagename}.html`);
+    win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
+    otherMenu = win;
 }
 
 app.whenReady().then(async () => { // Start the application
     if (await isSignedIn()) {
         createWindow('index'); // if the user is signed in(locally), have them go to the home page, otherwise re-login
-    } else createWindow('login');
+    } else createOtherWindow({pagename:'login'});
     app.on('activate', async () => { // allow event listener after the window is created
         if (BrowserWindow.getAllWindows().length === 0) {
             if (await isSignedIn()) {
                 createWindow('index');
-            } else createWindow('login');
+            } else createOtherWindow({pagename:'login'});
         }
     })
 })
@@ -77,7 +95,7 @@ app.on('window-all-closed', () => { // CLOSE THE APP
 
 ipcMain.on('attempt-login', async (event, loginInfo) => { // open specified page
     if (await correctLoginCreds(loginInfo.user, loginInfo.pass)) {
-        mainWindow.close();
+        if (otherMenu) otherMenu.close();
         createWindow('index');
     }
 });
@@ -149,6 +167,12 @@ ipcMain.on('rename-list', (event, fileName) => {
             }
         });
     
+});
+ipcMain.on('open-settings', (event, infoObject) => {
+    console.log("opening settings for " + infoObject.listName);
+    if (!(BrowserWindow.getAllWindows().length > 1)) {
+        var settingsWindow = createOtherWindow({pagename:'settings'});
+    }
 });
 // END EVENTS
 
@@ -383,10 +407,11 @@ async function tryLoadList(listPath) {
     try {
         const response = await getListResponse(listPath);
         if (response.statusCode == 200) {
+            sendNotification("success","Loaded more recent list from server..");
             userMetaData.set(db.get("lastList")+'-ver', parseInt(response.version));
             return response.data;
         } else {
-            console.log("problem loading list " + listPath);
+            console.log("List not retrieved from server: " + listPath);
             return "";
         }
       } catch (error) {
