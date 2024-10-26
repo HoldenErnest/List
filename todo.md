@@ -5,6 +5,7 @@
 - login page button
 - settings page (see project-styling.drawio)
 - link icon next to shared lists. maybe also initials of owner?
+- make it load from cache first, then when server list loads, load that(if its a more recent version) ✓
 
 
 ## Features

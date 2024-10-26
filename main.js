@@ -181,16 +181,6 @@ async function displayList(fileName) {
     currentListName = fileName;
     db.set("lastList",fileName);
 
-
-    // Attempt to get from server first
-    var serverData = await tryLoadList(fileName);
-    
-    if (serverData != "") {
-        var listArray = parseToArray(serverData);
-        saveList(serverData, false); // cache this list locally when you load it
-        mainWindow.webContents.send("display-list", listArray);
-        return;
-    }
     // read from a local file instead
     console.log("reading /" + fileName + " locally");
     var fullPath = "";
@@ -209,6 +199,17 @@ async function displayList(fileName) {
         // display them to the page
         mainWindow.webContents.send("display-list", listArray);
     });
+
+    // The chached list should be shown at this point, but check the server if there were any changes
+    var serverData = await tryLoadList(fileName);
+    
+    if (serverData != "") { // if the server actually has new data to show, load that instead
+        var listArray = parseToArray(serverData);
+        saveList(serverData, false); // cache this list locally when you load it
+        mainWindow.webContents.send("display-list", listArray);
+        return;
+    }
+
 }
 async function updateAvailableLists() {
     var fullPath = "";
