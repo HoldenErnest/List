@@ -13,12 +13,17 @@ module.exports = {
       },
     },
     {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
+      name: '@electron-forge/maker-deb',
+      config: {
+        options: {
+          maintainer: 'Holden Ernest',
+          icon: "images\\icon.png"
+        }
+      },
     },
     {
-      name: '@electron-forge/maker-deb',
-      config: {},
+      name: '@electron-forge/maker-zip',
+      platforms: ['darwin'],
     },
     {
       name: '@electron-forge/maker-rpm',
@@ -28,7 +33,7 @@ module.exports = {
   plugins: [
     {
       name: '@electron-forge/plugin-auto-unpack-natives',
-      config: {},
+      config: {}, 
     },
   ],
 };

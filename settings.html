@@ -5,12 +5,29 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <link rel="stylesheet" href="loginStyles.css">
+    <link rel="stylesheet" href="settingsStyles.css">
     <title>LupuVault Settings</title>
   </head>
   <body>
-    <div id="all-center">
-      <div id="title">Settings</div>
+    <div id="headerMenu">
+      <input class="menuButton" type="radio" name="mb" id="generalButton" value="0" onclick="showDiv('general')" checked>
+      <label for="generalButton">General</label>
+
+      <input class="menuButton" type="radio" name="mb" id="listsButton" value="1" onclick="showDiv('lists')">
+      <label for="listsButton">Lists</label>
+
+      <input class="menuButton" type="radio" name="mb" id="otherButton" value="2" onclick="showDiv('other')">
+      <label for="otherButton">Other</label>
+    </div>
+
+    <div id="lists" class="content">
+      lists
+    </div>
+    <div id="general" class="content">
+      general
+    </div>
+    <div id="other" class="content">
+      other
     </div>
 
     <script src="./settings.js"></script>
