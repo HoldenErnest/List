@@ -10,24 +10,29 @@
   </head>
   <body>
     <div id="headerMenu">
-      <input class="menuButton" type="radio" name="mb" id="generalButton" value="0" onclick="showDiv('general')" checked>
+      <input class="menuButton" type="radio" name="mb" id="generalButton" value="0">
       <label for="generalButton">General</label>
 
-      <input class="menuButton" type="radio" name="mb" id="listsButton" value="1" onclick="showDiv('lists')">
+      <input class="menuButton" type="radio" name="mb" id="listsButton" value="1" checked>
       <label for="listsButton">Lists</label>
 
-      <input class="menuButton" type="radio" name="mb" id="otherButton" value="2" onclick="showDiv('other')">
+      <input class="menuButton" type="radio" name="mb" id="otherButton" value="2">
       <label for="otherButton">Other</label>
     </div>
 
     <div id="lists" class="content">
-      lists
+      <div id="allLists">
+        <div>test1</div>
+        <div>test2</div>
+        <div>test3</div>
+      </div>
+      <input type="text" id="listRename" name="listName">
     </div>
     <div id="general" class="content">
-      general
+      There are currently no general interface settings. I will be working on this to make the user interaction as pleasing as possible
     </div>
     <div id="other" class="content">
-      other
+      There are currently no other settings. If you have a suggestion on what could go here please be sure to let me know
     </div>
 
     <script src="./settings.js"></script>

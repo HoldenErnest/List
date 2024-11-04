@@ -70,7 +70,7 @@ function createOtherWindow(optionsObject) {
         }
     })
     win.loadFile(`${optionsObject.pagename}.html`);
-    win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
+    //win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
     otherMenu = win;
 }
 
