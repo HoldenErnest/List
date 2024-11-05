@@ -19,7 +19,9 @@
       <input class="menuButton" type="radio" name="mb" id="otherButton" value="2">
       <label for="otherButton">Other</label>
     </div>
-
+    <!--a permission placeholder-->
+    <div class="placeholder permItem"></div>
+    <!--a permission placeholder-->
     <div id="lists" class="content">
       <div id="allLists">
         <div>test1</div>
@@ -27,6 +29,18 @@
         <div>test3</div>
       </div>
       <input type="text" id="listRename" name="listName">
+      <div id="listRenameButton">Rename</div>
+      <div id="perms">
+        <div id="permHeader">Permissions:</div>
+        <div id="permTable">
+          <div>bob</div>
+        </div>
+        <div id="permAdd">
+          <input type="text" id="permAddField" name="permAdd">
+          <div class="permOptions"></div>
+          <div id="permAddButton">+</div>
+        </div>
+      </div>
     </div>
     <div id="general" class="content">
       There are currently no general interface settings. I will be working on this to make the user interaction as pleasing as possible

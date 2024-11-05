@@ -83,6 +83,9 @@ input::-webkit-inner-spin-button {
 #other {
     display: none;
 }
+.placeholder {
+    display: none;
+}
 
 /*Lists Page*/
 #allLists {
@@ -126,4 +129,63 @@ input::-webkit-inner-spin-button {
     box-shadow: none;
     resize: none;
     padding-left: 10px;
+}
+.activeButton {
+    background-color: #222 !important;
+    color:gainsboro !important;
+}
+.activeButton:hover {
+    background-color: #444 !important;
+}
+#listRenameButton {
+    background-color: #2c2c2c;
+    color: #CCC;
+    font-size: 15px;
+    position: fixed;
+    left: 450px;
+    top: 70px;
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+}
+#perms {
+    font-size: 25px;
+    position: fixed;
+    left: 180px;
+    top: 125px;
+    height: auto;
+    width: 250px;
+    background-color: #444;
+
+}
+#permTable {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    height: 150px;
+    width: 100%;
+    background-color: red;
+    margin:0px;
+    
+}
+#permTable div {
+    font-size: 16px;
+    color:white;
+    border-bottom: 2px solid #222;
+    border-top: 2px solid #222;
+    height:25px;
+}
+#permTable::-webkit-scrollbar {
+    display: none;
+}
+#permAdd {
+    display: inline;
+}
+#permAdd * {
+    display: inline;
+}
+.permOptions {
+    height: 100%;
+    width: 30px;
 }

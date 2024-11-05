@@ -1,8 +1,10 @@
-
 document.getElementById("generalButton").onclick = () => showContent("general");
 document.getElementById("listsButton").onclick = () => showContent("lists");
 document.getElementById("otherButton").onclick = () => showContent("other");
-
+document.getElementById("listRename").onblur = updateListTextField;
+document.getElementById("listRenameButton").onclick = (e) => {
+    if (e.target.classList.contains("activeButton")) renameList();
+}
 function showContent(selectedDiv) {
     // Hide all content divs
     const divs = document.querySelectorAll('.content');
@@ -30,7 +32,8 @@ function updateLists() {
 function selectList(listName) {
     const renameField = document.getElementById("listRename");
     renameField.value = listName;
-    renameField.tagName = listName;
+    document.getElementById("listRenameButton").classList.remove("activeButton");
+    renameField.setAttribute("tag",listName);
     loadPerms(listName);
 }
 function loadPerms(listName) {
@@ -38,11 +41,24 @@ function loadPerms(listName) {
     // make everything greyed out by default
     // WHEN THE PERMS ARE LOADED.. make them visible IF you are the owner
 }
-function attemptListRename() {
+function updateListTextField() {
+    console.log("renameing");
     const renameField = document.getElementById("listRename");
     var newName = renameField.value;
-    var oldName = renameField.tagName;
+    var oldName = renameField.getAttribute("tag");
     if (newName == oldName) return;
-    //renameField.value = renameField.value.replace(/\./g, "");
-    // TODO: send to server, update list name from renameField.tagName
+    renameField.value = renameField.value.replace(/\./g, "");
+    allowRename();
+}
+function allowRename() {
+    document.getElementById("listRenameButton").classList.add("activeButton");
+}
+function renameList() {
+    const renameField = document.getElementById("listRename");
+    var newName = renameField.value;
+    var oldName = renameField.getAttribute("tag");
+    document.getElementById("listRenameButton").classList.remove("activeButton");
+    //TODO: send to server, change from tagname to value 
+    renameField.setAttribute("tag", renameField.value);
+    console.log(oldName + " >> " + newName);
 }
