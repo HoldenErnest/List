@@ -73,6 +73,7 @@ input::-webkit-inner-spin-button {
     display: block;
     margin-top: 50px;
     height:100%;
+    width: 100%;
 }
 #general {
     display: none;
@@ -165,27 +166,67 @@ input::-webkit-inner-spin-button {
     overflow-y: scroll;
     height: 150px;
     width: 100%;
-    background-color: red;
     margin:0px;
-    
-}
-#permTable div {
-    font-size: 16px;
-    color:white;
-    border-bottom: 2px solid #222;
-    border-top: 2px solid #222;
-    height:25px;
 }
 #permTable::-webkit-scrollbar {
     display: none;
 }
-#permAdd {
-    display: inline;
+#permHeader {
+    background-color: #333;
+    border-bottom: 2px solid white;
 }
-#permAdd * {
-    display: inline;
+#permAdd {
+    width: 100%;
+    height: 30px;
+    border-top: 2px solid #222;
+    display: flex;
+    flex-direction: row;
+}
+#permAddField {
+    margin-right: 0px;
+    background-color: #2a2a2a;
+    display: inline-flex;
+    color:gainsboro;
+
+    border: none;
+    overflow: auto;
+    outline: none;
+  -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    resize: none;
+    padding-left: 5px;
+}
+#permAddButton {
+    padding-left: 7px;
+    padding-right: 7px;
+    background-color: #444;
+}
+#permAddButton:hover {
+    background-color: #222;
+}
+.permItem {
+    font-size: 16px;
+    color:#999;
+    line-height: 25px;
+    border-bottom: 2px solid #333;
+    height:25px;
+    width: 100%;
+    display: inline-flex;
+    overflow: hidden;
+}
+.perItemName {
+    padding-left: 10px;
+    width: 150px;
+    height: 100%;
 }
 .permOptions {
+    background-color: darkblue;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-left: auto;
+    padding: 0px;
+    display: block;
     height: 100%;
     width: 30px;
 }

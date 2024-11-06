@@ -20,7 +20,10 @@
       <label for="otherButton">Other</label>
     </div>
     <!--a permission placeholder-->
-    <div class="placeholder permItem"></div>
+    <div class="placeholder permItem">
+      <div class="perItemName">Bill</div>
+      <div class="permOptions"></div>
+    </div>
     <!--a permission placeholder-->
     <div id="lists" class="content">
       <div id="allLists">
@@ -28,15 +31,32 @@
         <div>test2</div>
         <div>test3</div>
       </div>
-      <input type="text" id="listRename" name="listName">
+      <input type="text" id="listRename" name="listName" maxlength="20">
       <div id="listRenameButton">Rename</div>
       <div id="perms">
         <div id="permHeader">Permissions:</div>
         <div id="permTable">
-          <div>bob</div>
+
+          <div class="permItem">
+            <div class="perItemName">Bill</div>
+            <div class="permOptions" value=3></div>
+          </div>
+          <div class="permItem">
+            <div class="perItemName">Bill2</div>
+            <div class="permOptions"></div>
+          </div>
+          <div class="permItem">
+            <div class="perItemName">Bill</div>
+            <div class="permOptions" value=3></div>
+          </div>
+          <div class="permItem">
+            <div class="perItemName">Bill2</div>
+            <div class="permOptions"></div>
+          </div>
+
         </div>
         <div id="permAdd">
-          <input type="text" id="permAddField" name="permAdd">
+          <input type="text" id="permAddField" name="permAdd" maxlength="16" placeholder="enter username..">
           <div class="permOptions"></div>
           <div id="permAddButton">+</div>
         </div>
