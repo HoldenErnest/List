@@ -221,7 +221,7 @@ input::-webkit-inner-spin-button {
     height: 100%;
 }
 .permOptions {
-    background-color: darkblue;
+    background-color: #3a3a3a;
     margin-top: 0px;
     margin-right: 0px;
     margin-left: auto;
@@ -230,3 +230,31 @@ input::-webkit-inner-spin-button {
     height: 100%;
     width: 30px;
 }
+.permOptions:hover {
+    background-color: #222;
+}
+
+/*Perm click menu*/
+#permOpMenu {
+    z-index: 1;
+    position: absolute;
+    background-color: #111;
+    color: lightgray;
+    border: 1px solid #333;
+    user-select: none;
+    display: none; /* Initially hidden */
+  }
+  #permOpMenu * {
+    width: calc(100% - 20px); /* - 2*padding */
+    padding: 10px;
+  }
+  #permOpMenu *:hover {
+    background-color: #222;
+  }
+  #permOpRemove:hover { /* OVERRIDE THE OTHER color*/
+    color: #cb0000;
+  }
+  
+  #permOpMenu.show {
+    display: block; /* Show the menu */
+  }

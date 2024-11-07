@@ -22,9 +22,16 @@
     <!--a permission placeholder-->
     <div class="placeholder permItem">
       <div class="perItemName">Bill</div>
-      <div class="permOptions"></div>
+      <div class="permOptions" value="0"></div>
     </div>
     <!--a permission placeholder-->
+    <!-- This is a right click menu-->
+    <div id="permOpMenu" class="hidden">
+      <div class="permOp" value="0">Read</div>
+      <div class="permOp" value="1">Edit</div>
+      <div class="permOp" id="permOpRemove" value="2">Remove</div>
+    </div>
+
     <div id="lists" class="content">
       <div id="allLists">
         <div>test1</div>
@@ -39,19 +46,19 @@
 
           <div class="permItem">
             <div class="perItemName">Bill</div>
-            <div class="permOptions" value=3></div>
+            <div class="permOptions" value="0"></div>
           </div>
           <div class="permItem">
             <div class="perItemName">Bill2</div>
-            <div class="permOptions"></div>
+            <div class="permOptions" value="1"></div>
           </div>
           <div class="permItem">
-            <div class="perItemName">Bill</div>
-            <div class="permOptions" value=3></div>
+            <div class="perItemName">Bill3</div>
+            <div class="permOptions" value="2"></div>
           </div>
           <div class="permItem">
-            <div class="perItemName">Bill2</div>
-            <div class="permOptions"></div>
+            <div class="perItemName">Bill4</div>
+            <div class="permOptions" value="0"></div>
           </div>
 
         </div>
