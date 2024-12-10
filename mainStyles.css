@@ -523,6 +523,7 @@ option:hover {
 }
 /*Right click menu*/
 #listMenuRC {
+  z-index: 10;
   position: absolute;
   background-color: #111;
   color: lightgray;

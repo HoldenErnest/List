@@ -70,7 +70,7 @@ function createOtherWindow(optionsObject) {
         }
     })
     win.loadFile(`${optionsObject.pagename}.html`);
-    //win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
+    win.removeMenu(); // YOU CAN REMOVE, this will allow inspect element
     otherMenu = win;
 }
 
@@ -129,7 +129,7 @@ ipcMain.on('update-avail-lists', (event) => { // ran from preload
     updateAvailableLists();
 });
 ipcMain.on('save-list', (event, csvString) => {
-    console.log("saving list hopefully");
+    //console.log("saving list hopefully");
     saveList(csvString, true);
 });
 ipcMain.on('get-urls', (event, searched) => {
@@ -295,9 +295,9 @@ function sendNotification(type,message) {
 // SERVER CONNECTION STUFF---------------------------------
 function getHttpsOptions(user, pass, mode, list, contentLen, version) {
     var httpsOptions = {
-        hostname: '127.0.0.1', //'127.0.0.1'
+        hostname: process.env.SERVER_HOST, //'127.0.0.1'
         path: "/",
-        rejectUnauthorized: false, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
+        rejectUnauthorized: true, // [WARNING] - this is only for localhost purposes (remove this to make sure the client accepts that the IP is what the CA says it is)
         port: 2001,
         method: 'lupu',
         timeout: 3000,
@@ -334,9 +334,9 @@ function trySaveListToServer(listString) { // this doesnt need to be async, but 
                 userMetaData.set(db.get("lastList")+'-ver', version);
                 sendNotification('success','List Saved..');
             } else if (parseInt(res.statusCode/100) == 3) {
-                if (res.statusCode == 300)
+                if (res.statusCode == 300) {
                     sendNotification('error','Conflict saving: You made changes to an outdated version of the list');
-                else if (res.statusCode == 301) {
+                } else if (res.statusCode == 301) {
                     sendNotification('error','You are not allowed write permissions to this list');
                 }
                 
@@ -434,7 +434,7 @@ async function getListResponse(listPath) {
             });
 
             res.on('end', () => { // done chunking all data
-                console.log('[HTTPS] headers:', res.headers);
+                //console.log('[HTTPS] headers:', res.headers);
                 resolve({
                     statusCode: res.statusCode,
                     data: data,
