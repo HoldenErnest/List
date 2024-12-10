@@ -112,7 +112,9 @@ const correctLoginCreds = async (username, password) => {
     if (goodLogin) {
         db.set('uuid', username); // reset the uuid since this is the latest known real login
         db.set('password', password);
-        userMetaData = new JSONdb(path.join(app.getPath("userData"), 'clientLists', username, 'metaData.json'));
+        let fPath = path.join(app.getPath("userData"), 'clientLists', username);
+        fs.mkdirSync(fPath, {recursive: true});
+        userMetaData = new JSONdb(path.join(fPath, 'metaData.json'));
         return true;
     }
     return false;
@@ -211,24 +213,24 @@ async function displayList(fileName) {
     currentListName = fileName;
     db.set("lastList",fileName);
 
-    // read from a local file instead
+    // load local file first
     console.log("reading /" + fileName + " locally");
     var fullPath = "";
     fullPath = getCurrentListPath();
-    if (!fs.existsSync(fullPath)){
-        return;
-    }
-    fullPath = path.join(fullPath,fileName);
-    fullPath += ".csv";
+    console.log(fullPath + " is the full path");
+    if (fs.existsSync(fullPath)){
+        fullPath = path.join(fullPath,fileName);
+        fullPath += ".csv";
 
-    console.log("Displaying list: '" + fileName + "'"); // TODO: FIX, if its not a real path, just errors
-    fs.readFile(fullPath, 'utf8', function (err, data) {
-        if (err) return console.error(err);
-        // data is the contents of the text file we just read
-        var listArray = parseToArray(data);
-        // display them to the page
-        mainWindow.webContents.send("display-list", listArray);
-    });
+        console.log("Displaying list: '" + fileName + "'"); // TODO: FIX, if its not a real path, just errors
+        fs.readFile(fullPath, 'utf8', function (err, data) {
+            if (err) return console.error(err);
+            // data is the contents of the text file we just read
+            var listArray = parseToArray(data);
+            // display them to the page
+            mainWindow.webContents.send("display-list", listArray);
+        });
+    }
 
     // The chached list should be shown at this point, but check the server if there were any changes
     var serverData = await tryLoadList(fileName);
