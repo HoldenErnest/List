@@ -91,13 +91,19 @@ app.on('window-all-closed', () => { // CLOSE THE APP
     if (process.platform !== 'darwin') app.quit();
 })
 
-
+var isSigningIn = false;
 
 ipcMain.on('attempt-login', async (event, loginInfo) => { // open specified page
+    if (isSigningIn) return;
+    isSigningIn = true;
     if (await correctLoginCreds(loginInfo.user, loginInfo.pass)) {
+        console.log("CORRECT??????");
         if (otherMenu) otherMenu.close();
         createWindow('index');
+    } else {
+        otherMenu.webContents.send("send-notification", {type:'error',message:'Could not sign in'});
     }
+    isSigningIn = false;
 });
 const correctLoginCreds = async (username, password) => {
     console.log(`attempting to log in: [user:${username}, pass:${password}]`);

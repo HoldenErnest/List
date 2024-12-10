@@ -10,7 +10,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         if (element) element.innerText = text;
     }
 
-    replaceText(`install-version`, "1.2.1"); // TODO: set to app.getVersion();
+    replaceText(`install-version`, "1.3.0"); // TODO: set to app.getVersion();
 });
 
 // IMPORTANT: all connections between main and renderers are done through this
