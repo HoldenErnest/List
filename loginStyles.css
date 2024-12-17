@@ -61,54 +61,78 @@ input {
 
 /*------------------NOTIFICATIONS---------------------------*/
 #notification-area {
-    position: fixed;
-    right: 0px;
-    top: 20px;
-    width: 200px;
-    overflow: hidden;
-    padding-right: 20px;
-    padding-top: 5px;
-    z-index: 1;
+  position: fixed;
+  right: 0px;
+  top: 20px;
+  width: 200px;
+  overflow: hidden;
+  padding-right: 20px;
+  padding-top: 5px;
+  z-index: 1;
+}
+
+#notification-area .notification {
+  float: right;
+  max-width: 100%;
+  display: block;
+  color: #f2f2f2;
+  padding: 8px;
+  margin-bottom: 5px;
+  text-decoration: none;
+  user-select: none;
+  border-radius: 3px;
+  animation-duration: 0.5s;
+  animation-name: slidein;
+}
+.notification.error {
+  border: solid 1px red;
+  background-color: rgba(98, 0, 0, 0.7);
+  opacity: 0.7;
+}
+.notification.warning {
+  border: solid 1px orange;
+  background-color: rgba(108, 73, 19, 0.7);
+  opacity: 0.7;
+}
+.notification.success {
+  border: solid 1px rgb(0, 200, 0);
+  background-color: rgba(0, 95, 0, 0.7);
+  opacity: 0.7;
+}
+.notification:hover {
+  opacity: 1.0;
+}
+@keyframes slidein {
+  from {
+    translate: 100vw 0;
+    scale: 200% 1;
   }
-  
-  #notification-area .notification {
-    float: right;
-    max-width: 100%;
-    display: block;
-    color: #f2f2f2;
-    padding: 8px;
-    margin-bottom: 5px;
-    text-decoration: none;
-    user-select: none;
-    border-radius: 3px;
-    animation-duration: 0.5s;
-    animation-name: slidein;
+  to {
+    translate: 0 0;
+    scale: 100% 1;
   }
-  .notification.error {
-    border: solid 1px red;
-    background-color: rgba(98, 0, 0, 0.7);
-    opacity: 0.7;
-  }
-  .notification.warning {
-    border: solid 1px orange;
-    background-color: rgba(108, 73, 19, 0.7);
-    opacity: 0.7;
-  }
-  .notification.success {
-    border: solid 1px rgb(0, 200, 0);
-    background-color: rgba(0, 95, 0, 0.7);
-    opacity: 0.7;
-  }
-  .notification:hover {
-    opacity: 1.0;
-  }
-  @keyframes slidein {
-    from {
-      translate: 100vw 0;
-      scale: 200% 1;
-    }
-    to {
-      translate: 0 0;
-      scale: 100% 1;
-    }
-  }
+}
+
+/* END NOTIFICATIONS */
+
+#offline-button {
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+}
+.aButton {
+  color: grey;
+  width: 60px;
+  height: 40px;
+  background-color: #222;
+  border: none;
+  overflow: hidden;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.aButton:hover {
+  cursor: pointer;
+  background-color: #444;
+}

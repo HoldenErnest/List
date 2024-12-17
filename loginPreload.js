@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
             // whitelist channels
-            let validChannels = ["attempt-login"];
+            let validChannels = ["attempt-login","start-offline"];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             } else {

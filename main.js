@@ -20,6 +20,8 @@ const { Console } = require('node:console');
 var imgSearch = new imageSearch(process.env.CSE_ID, process.env.IMG_API_KEY);
 const imgOptions = {page:1};
 
+var offlineOnly = false; // !IMPORTANT - this controls all online accessibility
+
 var currentListName; // keep track of the list youre currently displaying to renderer
 
 /*
@@ -92,7 +94,24 @@ app.on('window-all-closed', () => { // CLOSE THE APP
 })
 
 var isSigningIn = false;
+ipcMain.on('start-offline', () => {
+    offlineOnly = true;
+    var username = db.get('uuid');
+    if (!username) {
+        otherMenu.webContents.send("send-notification", {type:'warning',message:'You must log in at least once to view your lists offline'});
+        return;
+    }
 
+    let fPath = path.join(app.getPath("userData"), 'clientLists', username);
+    if (!fs.existsSync(fPath)) { // the user exists but no files exist
+        otherMenu.webContents.send("send-notification", {type:'error',message:'No lists found for last users login'});
+        return;
+    }
+    userMetaData = new JSONdb(path.join(fPath, 'metaData.json'));
+
+    if (otherMenu) otherMenu.close();
+    createWindow('index');
+});
 ipcMain.on('attempt-login', async (event, loginInfo) => { // open specified page
     if (isSigningIn) return;
     isSigningIn = true;
@@ -138,6 +157,11 @@ ipcMain.on('update-avail-lists', (event) => { // ran from preload
 });
 ipcMain.on('save-list', (event, csvString) => {
     //console.log("saving list hopefully");
+    if (offlineOnly) {
+        sendNotification('error', 'Cannot save while viewing offline');
+        displayList(db.get("lastList"));
+        return;
+    }
     saveList(csvString, true);
 });
 ipcMain.on('get-urls', (event, searched) => {
@@ -231,7 +255,7 @@ async function displayList(fileName) {
             mainWindow.webContents.send("display-list", listArray);
         });
     }
-
+    if (offlineOnly) return;
     // The chached list should be shown at this point, but check the server if there were any changes
     var serverData = await tryLoadList(fileName);
     
@@ -246,8 +270,10 @@ async function displayList(fileName) {
 async function updateAvailableLists() {
     var fullPath = "";
     var files = [];
+    var serverData
+    if (!offlineOnly)
+        serverData = await tryGetLists();
 
-    var serverData = await tryGetLists();
     if (serverData) { // get all server-available lists for this user
         files = serverData.split(' ');
     } else {

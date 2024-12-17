@@ -4,8 +4,12 @@
 let login = document.getElementById('login');
 let loginUser = document.getElementById('loginUser');
 let loginPass = document.getElementById('loginPass');
+const offlineButton = document.getElementById('offline-button');
 login.addEventListener('click', () => {
     window.api.send('attempt-login', {user: loginUser.value, pass: loginPass.value});
+});
+offlineButton.addEventListener('click', () => {
+    window.api.send('start-offline', {});
 });
 
 //NOTIFICAITON STUFF

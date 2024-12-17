@@ -12,7 +12,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     replaceText(`install-version`, "1.3.0"); // TODO: set to app.getVersion();
 
-    ipcRenderer.send('load-last-list'); // auto load the list // TODO MAKE THESE ONLY RUN WHEN PAGE IS index.html
+    ipcRenderer.send('load-last-list'); // auto load the list
     ipcRenderer.send('update-avail-lists');
 });
 
