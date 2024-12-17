@@ -5,12 +5,75 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <link rel="stylesheet" href="loginStyles.css">
-    <title>ChimpList Settings</title>
+    <link rel="stylesheet" href="settingsStyles.css">
+    <title>LupuVault Settings</title>
   </head>
   <body>
-    <div id="all-center">
-      <div id="title">Settings</div>
+    <div id="headerMenu">
+      <input class="menuButton" type="radio" name="mb" id="generalButton" value="0">
+      <label for="generalButton">General</label>
+
+      <input class="menuButton" type="radio" name="mb" id="listsButton" value="1" checked>
+      <label for="listsButton">Lists</label>
+
+      <input class="menuButton" type="radio" name="mb" id="otherButton" value="2">
+      <label for="otherButton">Other</label>
+    </div>
+    <!--a permission placeholder-->
+    <div class="placeholder permItem">
+      <div class="perItemName">Bill</div>
+      <div class="permOptions" value="0"></div>
+    </div>
+    <!--a permission placeholder-->
+    <!-- This is a right click menu-->
+    <div id="permOpMenu" class="hidden">
+      <div class="permOp" value="0">Read</div>
+      <div class="permOp" value="1">Edit</div>
+      <div class="permOp" id="permOpRemove" value="2">Remove</div>
+    </div>
+
+    <div id="lists" class="content">
+      <div id="allLists">
+        <div>test1</div>
+        <div>test2</div>
+        <div>test3</div>
+      </div>
+      <input type="text" id="listRename" name="listName" maxlength="20">
+      <div id="listRenameButton">Rename</div>
+      <div id="perms">
+        <div id="permHeader">Permissions:</div>
+        <div id="permTable">
+
+          <div class="permItem">
+            <div class="perItemName">Bill</div>
+            <div class="permOptions" value="0"></div>
+          </div>
+          <div class="permItem">
+            <div class="perItemName">Bill2</div>
+            <div class="permOptions" value="1"></div>
+          </div>
+          <div class="permItem">
+            <div class="perItemName">Bill3</div>
+            <div class="permOptions" value="2"></div>
+          </div>
+          <div class="permItem">
+            <div class="perItemName">Bill4</div>
+            <div class="permOptions" value="0"></div>
+          </div>
+
+        </div>
+        <div id="permAdd">
+          <input type="text" id="permAddField" name="permAdd" maxlength="16" placeholder="enter username..">
+          <div class="permOptions"></div>
+          <div id="permAddButton">+</div>
+        </div>
+      </div>
+    </div>
+    <div id="general" class="content">
+      There are currently no general interface settings. I will be working on this to make the user interaction as pleasing as possible
+    </div>
+    <div id="other" class="content">
+      There are currently no other settings. If you have a suggestion on what could go here please be sure to let me know
     </div>
 
     <script src="./settings.js"></script>

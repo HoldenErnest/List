@@ -1,5 +1,5 @@
-// Holden Ernest - 1/11/2024
-// This has access to both the DOM and electron
+// Holden Ernest - 10/26/2024
+// login preloader :o
 
 const { contextBridge, ipcRenderer, app } = require("electron");
 
@@ -11,9 +11,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
     }
 
     replaceText(`install-version`, "1.3.0"); // TODO: set to app.getVersion();
-
-    ipcRenderer.send('load-last-list'); // auto load the list
-    ipcRenderer.send('update-avail-lists');
 });
 
 // IMPORTANT: all connections between main and renderers are done through this
@@ -22,7 +19,7 @@ contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
             // whitelist channels
-            let validChannels = ["attempt-login","load-list","get-urls","save-list","rename-list","open-settings"];
+            let validChannels = ["attempt-login"];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             } else {
@@ -30,7 +27,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         receive: (channel, func) => {
-            let validChannels = ['display-list','update-image','recieve-list-names','send-notification'];
+            let validChannels = ['send-notification'];
             if (validChannels.includes(channel)) {
                 // Deliberately strip event as it includes `sender` 
                 ipcRenderer.on(channel, (event, ...args) => func(...args));

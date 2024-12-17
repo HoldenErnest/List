@@ -6,9 +6,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <link rel="stylesheet" href="loginStyles.css">
-    <title>ChimpList Login</title>
+    <title>LupuVault Login</title>
   </head>
   <body>
+    <div class="notification placeholder" id="placeholder-noti" value=""></div>
+
+    <div id="notification-area"></div>
     <div id="all-center">
       <div id="title">Login</div>
       <form>
@@ -20,7 +23,7 @@
       </form>
       <div id="help-text">If you do not have an account and would like one, message the server owner</div>
     </div>
-
+    <button id="offline-button" class="aButton">View Offline</button>
     <script src="./login.js"></script>
   </body>
 </html>

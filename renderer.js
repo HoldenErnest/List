@@ -18,15 +18,23 @@ document.getElementById("add-item-btn").onclick = newItem;
 document.getElementById("new-list-button").onclick = newList;
 document.getElementById("sort-order").onclick = toggleAscendingSort;
 
+var warnedNoSave = false; // if you havent saved and you try to leave, warn the user ONCE, when they next try again, let them 
 var madeChange = false; // determine when the save button needs to appear
 var hasNew = false; // whether the list has a new element that hasnt been submitted
 var lastImageEdit; // determine what item to put the image in when its done async loading
 var lastImageNumber = 0; // what image was the last selected for some reason
-var allListsArray; // list of names that are all your available lists
+var allListsArray = []; // list of names that are all your available lists
 
 var tagsDictionary = {}; // a dictonary of all tags the user has
 
 var sortOrder = 1;
+
+document.addEventListener('click', (event) => { // EVENT FOR ALL CLICKING
+    const contextMenu = document.getElementById('listMenuRC');
+    if (!contextMenu.contains(event.target)) { // hide the menu if its not a click in that menu
+      contextMenu.classList.remove('show');
+    }
+});
 
 function setupListListeners() { // when you double click a list
     var allListElements = Array.from(document.getElementsByClassName('sidebar-list'));
@@ -151,10 +159,16 @@ function madeEdit(anItem) { // anytime an item is changed, call this method to s
 function showSaveButton() {
     var saveBtn = document.getElementById("save-check");
     saveBtn.checked = true;
-
+}
+function hideSaveButton() {
+    var saveBtn = document.getElementById("save-check");
+    saveBtn.checked = false;
+    madeChange = false;
+    displayNotification("warning","Changes discarded");
 }
 function saveList() {
     madeChange = false;
+    // dont have to use hideSaveButton() since its toggled off when you click it
     var allItems = document.querySelectorAll('#list-items .item');
     var csvString = "";
     for (let i = 0; i < allItems.length; i++) { // Optimization? what?
@@ -323,6 +337,7 @@ window.api.receive('update-image', (urls) => {
 
 window.api.receive('display-list', (listData) => {
     // when Main wants a list displayed (this is essentially "IPCrenderer.on")
+    removeAllItems();
     displayListItems(listData);
 });
 function displayListItems(listData) {
@@ -419,7 +434,7 @@ function addSubmitButton(anItem) { // when you make a new item, have the id slot
 
         sort_all();
         madeEdit(anItem);
-        hasNew = false;
+        hasNew = false; // when youve saved this new item, make sure to allow other items to be created
     }
     theId.onmouseenter = function() {
         theId.style.backgroundColor = "#151";
@@ -460,7 +475,7 @@ function newList() { // crete a new list based off #new-list-input
     escapePress();
 }
 function toUsableFilename(inputString) {
-    return inputString.replace(/[/\\?%*:|"<>]/g, '-');
+    return inputString.replace(/[/ \\?%*:|"<>]./g, '-');
 }
 function listNameExists(listName) {
     for (var i = 0; i < allListsArray.length; i++) {
@@ -496,10 +511,32 @@ function createList(listName, isSelected) { // A new list display on the sidebar
     clone.innerHTML = listName;
     clone.value = listName; // TODO make this more visible
     parentElement.insertBefore(clone, parentElement.firstChild);
+    clone.addEventListener('contextmenu', function(event) { // RIGHT CLICK MENU
+        event.preventDefault();
+        
+        const contextMenu = document.getElementById('listMenuRC');
+        contextMenu.value = this.value;
+        contextMenu.style.left = event.clientX + 'px';
+        contextMenu.style.top = event.clientY + 'px';
+        contextMenu.classList.add('show');
+    });
+
     clone.addEventListener("click", function(evt) {
         //if the list is already selected dont change anything
         if (Array.from(this.classList).includes("selected")) return;
-        removeAllItems();
+
+        if (madeChange) {
+            if (!warnedNoSave) {
+                warnedNoSave = true;
+                displayNotification("warning","Changes not saved! Press again to discard changes")
+                return;
+            }
+            //if youve already warned them and they decide to discard changes, remove save button
+            hideSaveButton();
+        }
+        warnedNoSave = false;
+
+        removeAllItems(); // You can remove this to make it so that any newly created list derrives from the currently selected list.
         loadList(this.value);
         setSelected(this);
     });
@@ -507,11 +544,12 @@ function createList(listName, isSelected) { // A new list display on the sidebar
 }
 
 function setSelected(list) { // sets the selected list (not list Item)
+    hasNew = false;
     var parentElement = document.getElementById("sidebar");
     Array.from(parentElement.getElementsByClassName("sidebar-list")).forEach(list => {
-        list.classList.remove("selected");
+        list.classList.remove("selected"); // remove selected class from all others
     });
-    list.classList.add("selected");
+    list.classList.add("selected"); // set this new list to selected
 }
 function toggleAscendingSort() {
     toggleElem = this;
@@ -525,3 +563,54 @@ function toggleAscendingSort() {
 
     sort_all();
 }
+//NOTIFICAITON STUFF
+window.api.receive('send-notification', (notiObj) => {
+    displayNotification(notiObj.type,notiObj.message);
+});
+function displayNotification(type, message) { // display a notification of a certain type.
+    // type can be either 'success' 'warning' 'error'
+    //animation handled with css
+    console.log("notification["+ type + "]: " + message)
+    const newNoti = newNotificationItem(type,message);
+    fadeOutAfter(newNoti,5); // set fade effect
+}
+function newNotificationItem(type, message) { // create a new HTML element for a notification
+    var original = document.getElementById('placeholder-noti');
+    if (original == null) return;
+    var clone = original.cloneNode(true); // "deep" clone
+    clone.classList.remove("placeholder");
+    clone.classList.add(type);
+    clone.id = '';
+    clone.innerHTML = message;
+    notiDiv = document.getElementById('notification-area');
+    notiDiv.appendChild(clone);
+    return clone;
+}
+
+function fadeOutAfter(element, seconds) {
+    const fadeEffectTime = 2;
+    setTimeout(() => {
+      element.style.opacity = 1; // Ensure initial opacity
+      element.style.transition = `opacity ${fadeEffectTime}s ease-in`;
+      element.style.opacity = 0;
+      setTimeout(() => { // the actual transition will take fadeEffectTime to complete, wait for then
+        element.remove();
+      }, fadeEffectTime * 1000);
+    }, seconds * 1000);
+}
+
+// RIGHT CLICK MENU-------
+document.getElementById('listRenameBtn').addEventListener('click', function() {
+    const contextMenu = this.parentElement;
+    console.log(contextMenu.value + " is the list getting renamed");
+    //TODO: implement
+});
+document.getElementById('listRemoveBtn').addEventListener('click', function() {
+    const contextMenu = this.parentElement;
+    console.log(contextMenu.value + " is the list getting removed");
+    //TODO: implement
+});
+document.getElementById('listSettingsBtn').addEventListener('click', function() {
+    const contextMenu = this.parentElement;
+    window.api.send("open-settings", {listName:contextMenu.value});
+});

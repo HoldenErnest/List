@@ -1,10 +1,6 @@
 # List
 An Electron App used to keep track of anything you want, with the ability to give them ratings and descriptions. The plan is to get a certification for HTTPS and host a server to contain all users lists, after that I will port it to mobile.
 
-# BUGS / TODO
-- spellcheck="true" on textarea
-- maybe "=" or "+" auto adds
-
 # Setup
 - make sure node is installed
 - Clone this repo
@@ -29,3 +25,8 @@ https://www.electronjs.org/docs/latest/tutorial/quick-start
 
 ## Regex search results
 ![Regex search results](Images/CL-search.png)
+
+# Remote Hosting / Serving
+
+## Save Conflicts (Could be Merge-Capable in the future)
+![Save Conflicts](Images/SaveConflict.png)
