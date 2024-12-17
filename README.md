@@ -30,3 +30,6 @@ https://www.electronjs.org/docs/latest/tutorial/quick-start
 
 ## Save Conflicts (Could be Merge-Capable in the future)
 ![Save Conflicts](Images/SaveConflict.png)
+
+## List Sharing + Permission CLI
+![Save Conflicts](Images/ShareCLI.png)
