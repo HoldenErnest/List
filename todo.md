@@ -18,8 +18,8 @@
 
 
 ## Design
-- Change the icon to be something better and or cooler
-- maybe a name change to be something better
+- Change the icon to be something better and or cooler ✓
+- maybe a name change to be something better ✓
 - setting? Auto fill in date when typing in six numbers next to each other, ex: 020724 ("too much work im dying" -Holden)
 
 
