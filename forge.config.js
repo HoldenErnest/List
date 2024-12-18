@@ -17,17 +17,13 @@ module.exports = {
       config: {
         options: {
           maintainer: 'Holden Ernest',
-          icon: "images\\icon.png"
+          icon: "Images/icon.png"
         }
       },
     },
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
-    },
-    {
-      name: '@electron-forge/maker-rpm',
-      config: {},
     },
   ],
   plugins: [
