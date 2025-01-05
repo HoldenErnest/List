@@ -1,4 +1,8 @@
 ## ToDo
+- standalone CLI script
+- Import list button
+- build for phone
+
 - Backups of some kind (automatic if the changes are more than a few bytes?)
 - add option to remove lists (include an are you sure by making user input their password)
 - allow access offline (configure an "I want to use this offline" button)
