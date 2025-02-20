@@ -1,5 +1,5 @@
 # List
-An Electron App used to keep track of anything you want, with the ability to give them ratings and descriptions. The plan is to get a certification for HTTPS and host a server to contain all users lists, after that I will port it to mobile.
+An Electron App used to keep track of anything you want, with the ability to give them ratings and descriptions. The plan is to enventually port it to mobile, since I now have a server to store users lists you can find [here](https://github.com/HoldenErnest/ListServer).
 
 # Setup
 - make sure node is installed
